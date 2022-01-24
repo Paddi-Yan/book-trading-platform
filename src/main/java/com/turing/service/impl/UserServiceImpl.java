@@ -3,14 +3,12 @@ package com.turing.service.impl;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.turing.common.HttpStatusCode;
 import com.turing.common.RedisKey;
 import com.turing.common.Result;
 import com.turing.entity.Book;
 import com.turing.entity.User;
-import com.turing.entity.WXAuthInfo;
-import com.turing.entity.WechatUserInfo;
+import com.turing.entity.dto.WechatUserInfo;
 import com.turing.entity.dto.BookDto;
 import com.turing.entity.dto.UserDto;
 import com.turing.interceptor.UserThreadLocal;
@@ -36,12 +34,6 @@ import java.util.concurrent.TimeUnit;
 public class UserServiceImpl implements UserService
 {
 
-    @Value("${wechat-mini.appid}")
-    private String appid;
-
-    @Value("${wechat-mini.secret}")
-    private String secret;
-
     @Autowired
     private RedisTemplate redisTemplate;
 
@@ -54,6 +46,7 @@ public class UserServiceImpl implements UserService
     @Autowired
     private BookMapper bookMapper;
 
+    /*
     @Override
     public String getSessionId(String code)
     {
@@ -70,13 +63,13 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public Result authLogin(WXAuthInfo wxAuthInfo)
+    public Result authLogin(WxAuthInfo wxAuthInfo)
     {
         //解密WxAuthInfo
         try {
             String json = wechatService.wechatDecrypt(wxAuthInfo.getEncryptedData(), wxAuthInfo.getSessionId(), wxAuthInfo.getIv());
             WechatUserInfo wechatUserInfo = JSON.parseObject(json, WechatUserInfo.class);
-            String openId = wechatUserInfo.getOpenId();
+            String openId = wechatUserInfo.getOpenid();
             //解密后获取到用户信息-openId 性别 昵称 头像等信息
             //openId是唯一的 在user表中查询openId是否存在 存在-登录 不存在-注册
             //生成token令牌 返回给前端
@@ -122,10 +115,11 @@ public class UserServiceImpl implements UserService
     {
         String token = JWTUtils.sign(userDto.getId());
         userDto.setToken(token);
-        userDto.setOpenId(null);
+        userDto.setOpenid(null);
         redisTemplate.opsForValue().set(RedisKey.TOKEN+token,userDto,7,TimeUnit.DAYS);
         return new Result().success(userDto).message("用户登录成功!");
     }
+     */
 
     @Override
     public Result getUserInfo(Boolean refreshToken)
@@ -210,6 +204,12 @@ public class UserServiceImpl implements UserService
         }
         bookMapper.delete(queryWrapper);
         return new Result().success(book);
+    }
+
+    @Override
+    public User getUserByOpenId(String openid)
+    {
+        return userMapper.selectOne(new QueryWrapper<User>().eq("openid",openid));
     }
 
 

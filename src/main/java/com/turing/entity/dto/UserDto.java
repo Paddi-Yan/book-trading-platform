@@ -1,17 +1,12 @@
 package com.turing.entity.dto;
 
 import com.turing.entity.User;
-import com.turing.entity.WechatUserInfo;
-import com.turing.interceptor.UserThreadLocal;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * @Author: 又蠢又笨的懒羊羊程序猿
@@ -22,28 +17,29 @@ import java.util.Optional;
 @NoArgsConstructor
 public class UserDto implements Serializable
 {
+    private static final long serialVersionUID = -3992971186990897627L;
     private Long id;
     private String nickname;
     private String username;
     private String password;
     private String gender;
     private String mobile;
-    private String openId;
-    private String photo;
+    private String openid;
+    private String avatar;
 
     //拓展信息
-
     private String token;
 
     public void transform(WechatUserInfo wechatUserInfo)
     {
+//        this.id = wechatUserInfo.getUserId();
         this.nickname = wechatUserInfo.getNickname();
-        this.photo = wechatUserInfo.getAvatarUrl();
+        this.avatar = wechatUserInfo.getAvatar();
         this.username = "";
         this.password = "";
         this.mobile = "";
-        this.gender = wechatUserInfo.getGender();
-        this.openId = wechatUserInfo.getOpenId();
+        this.gender = String.valueOf(wechatUserInfo.getGender());
+        this.openid = wechatUserInfo.getOpenid();
     }
 
     public void transform(User user)

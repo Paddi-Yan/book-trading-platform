@@ -15,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class TagDto implements Serializable
 {
+    private static final long serialVersionUID = 3732396808614348602L;
     private List<Tag> publicTags;
     private List<Tag> privateTags;
 }

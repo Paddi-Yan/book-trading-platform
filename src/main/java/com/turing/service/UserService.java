@@ -2,9 +2,9 @@ package com.turing.service;
 
 import com.turing.common.Result;
 import com.turing.entity.User;
-import com.turing.entity.WXAuthInfo;
 import com.turing.entity.dto.BookDto;
 import com.turing.entity.dto.UserDto;
+import com.turing.entity.dto.WechatLoginInfo;
 
 /**
  * @Author: 又蠢又笨的懒羊羊程序猿
@@ -12,13 +12,9 @@ import com.turing.entity.dto.UserDto;
  */
 public interface UserService
 {
-    String getSessionId(String code);
 
-    Result authLogin(WXAuthInfo wxAuthInfo);
 
-    Result registry(UserDto userDto);
 
-    Result login(UserDto userDto);
 
     Result getUserInfo( Boolean refreshToken);
 
@@ -31,4 +27,6 @@ public interface UserService
     Result withdrawBookInfo(Integer bookId, Integer userId);
 
     Result deleteHistory(Integer bookId, Integer userId);
+
+    User getUserByOpenId(String openid);
 }

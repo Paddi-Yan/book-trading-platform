@@ -4,7 +4,6 @@ import com.turing.common.HttpStatusCode;
 import com.turing.common.Result;
 import com.turing.entity.Book;
 import com.turing.entity.User;
-import com.turing.entity.WXAuthInfo;
 import com.turing.entity.dto.BookDto;
 import com.turing.interceptor.NoNeedToAuthorized;
 import com.turing.service.BookService;
@@ -42,26 +41,7 @@ public class UserController
     private BookService bookService;
 
 
-    @PostMapping("/getSessionId")
-    @ResponseBody
-    @ApiOperation("获取用户标识")
-    @NoNeedToAuthorized
-    public Result getSessionId(@RequestParam String code)
-    {
-        String sessionId = userService.getSessionId(code);
-        Map<String, String> map = new HashMap<>();
-        map.put("sessionId",sessionId);
-        return new Result().success(map);
-    }
 
-    @PostMapping("/login")
-    @ResponseBody
-    @ApiOperation("微信一键登录")
-    @NoNeedToAuthorized
-    public Result login(WXAuthInfo wxAuthInfo)
-    {
-        return userService.authLogin(wxAuthInfo);
-    }
 
     @ResponseBody
     @GetMapping("/getUserInfo")

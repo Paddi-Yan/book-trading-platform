@@ -4,12 +4,16 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.turing.entity.dto.UserDto;
+import com.turing.entity.dto.WechatUserInfo;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 
+import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -25,11 +29,13 @@ public class User
     @TableId(value = "id",type = IdType.AUTO)
     private Long id;
 
-    @TableField(value = "open_id")
-    private String openId;
+    private String openid;
     private String nickname;
     private String gender;
-    private String photo;
+    /**
+     * 头像
+     */
+    private String avatar;
 
     /**
      * 以下信息属于用户私密信息
@@ -40,9 +46,29 @@ public class User
     private String password;
     private String mobile;
 
+    private String city;
+    private String province;
+    private String country;
+
+    /**
+     * 是否被禁用
+     */
+    @TableField("enabled")
+    private byte isEnabled;
+
+    private Timestamp registerTime;
+    private String lastLoginIP;
 
     public void transform(UserDto userDto)
     {
         BeanUtils.copyProperties(userDto,this);
     }
+
+    public void transform(WechatUserInfo wechatUserInfo)
+    {
+        BeanUtils.copyProperties(wechatUserInfo,this);
+    }
+
+
+
 }
