@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 
 import java.util.Collections;
 
-public class MyBatisPlusCode {
+public class MyBatisPlusCode {//代码生成
     public static void main(String[] args) {
         FastAutoGenerator.create("jdbc:mysql://localhost:3306/sys?useUnicode=true&characterEncoding=utf-8&useSSL=false",
                         "root",
@@ -19,15 +19,15 @@ public class MyBatisPlusCode {
                             .outputDir("I:\\ProjectAll\\work\\wechat-mini-server\\src\\main\\java"); // 指定输出目录
                 })
                 .packageConfig(builder -> {
-                    builder.parent("com.turing") // 设置父包名
-                            .moduleName("entity") // 设置父包模块名
+                    builder.parent("com") // 设置父包名
+                            .moduleName("turing") // 设置父包模块名
                             .pathInfo(Collections.singletonMap(OutputFile.mapperXml, "I:\\ProjectAll\\work\\wechat-mini-server\\src\\main\\resources\\mapper")); // 设置mapperXml生成路径
                 })
                 .strategyConfig(builder -> {
-                    builder.addInclude("sys") // 设置需要生成的表名
+                    builder.addInclude("community","community_infor","post") // 设置需要生成的表名
                             .addTablePrefix("t_", "c_"); // 设置过滤表前缀
                 })
-                .templateEngine(new FreemarkerTemplateEngine()) // 使用Freemarker引擎模板，默认的是Velocity引擎模板
+//                .templateEngine(new FreemarkerTemplateEngine()) // 使用Freemarker引擎模板，默认的是Velocity引擎模板
                 .execute();
 
     }
