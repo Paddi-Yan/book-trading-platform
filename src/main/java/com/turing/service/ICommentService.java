@@ -1,5 +1,6 @@
 package com.turing.service;
 
+import com.turing.common.Result;
 import com.turing.entity.Comment;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -13,5 +14,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ICommentService extends IService<Comment> {
 
+    Result getCommentByPostId(Integer postId);
 
 }

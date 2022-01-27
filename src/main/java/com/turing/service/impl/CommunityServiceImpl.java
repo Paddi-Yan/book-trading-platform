@@ -31,13 +31,13 @@ public class CommunityServiceImpl extends ServiceImpl<CommunityMapper, Community
     @Override
     public Result getCommunity(Integer userId) {
         List<CommunityInfor> communityByUserId = communityInforMapper.getCommunityByUserId(userId);
-        return new Result().data(communityByUserId);
+        return new Result().success(communityByUserId);
     }
 
     @Override
     public Result getCommunityInformation(Integer communityId) {
         CommunityInfor communityInfor = communityInforMapper.selectById(communityId);
-        return new Result().data(communityInfor);
+        return new Result().success(communityInfor);
     }
 
 

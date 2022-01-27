@@ -17,6 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 public interface ICommunityService extends IService<Community> {
     Result getCommunity(Integer userId);
 
-    public Result getCommunityInformation(Integer communityId);
+    Result getCommunityInformation(Integer communityId);
 
 }
