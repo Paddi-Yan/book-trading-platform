@@ -2,4 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.turing.mapper.PostMapper">
 
+
+    <select id="getPostByCommunityId" resultType="com.turing.entity.Post" parameterType="integer">
+        select i.* from post i
+                            left join community c on i.community_id = c.community_id
+        where c.community_id = #{communityId}
+    </select>
+    <select id="getPostByUserId" resultType="com.turing.entity.Post" parameterType="integer">
+        select i.* from post i
+                            left join user u on u.id = i.user_id
+        where user_id = #{userId}
+    </select>
+    <select id="getPostByBookId" resultType="com.turing.entity.Post" parameterType="integer">
+        select i.* from post i
+                            left join book b on b.id = i.book_id
+        where book_id = #{bookId}
+    </select>
 </mapper>

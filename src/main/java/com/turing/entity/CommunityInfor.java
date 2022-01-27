@@ -7,6 +7,9 @@ import java.io.Serializable;
 import java.sql.Blob;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * <p>
@@ -16,6 +19,9 @@ import io.swagger.annotations.ApiModelProperty;
  * @author qds
  * @since 2022-01-26
  */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @TableName("community_infor")
 @ApiModel(value = "CommunityInfor对象", description = "")
 public class CommunityInfor implements Serializable {
@@ -30,43 +36,10 @@ public class CommunityInfor implements Serializable {
     private String comName;
 
     @ApiModelProperty("社区头像")
-    private Blob comPhoto;
+    private String comPhoto;
 
     @ApiModelProperty("社区信息介绍")
     private String comInfor;
-
-
-    public Long getComId() {
-        return comId;
-    }
-
-    public void setComId(Long comId) {
-        this.comId = comId;
-    }
-
-    public String getComName() {
-        return comName;
-    }
-
-    public void setComName(String comName) {
-        this.comName = comName;
-    }
-
-    public Blob getComPhoto() {
-        return comPhoto;
-    }
-
-    public void setComPhoto(Blob comPhoto) {
-        this.comPhoto = comPhoto;
-    }
-
-    public String getComInfor() {
-        return comInfor;
-    }
-
-    public void setComInfor(String comInfor) {
-        this.comInfor = comInfor;
-    }
 
     @Override
     public String toString() {
