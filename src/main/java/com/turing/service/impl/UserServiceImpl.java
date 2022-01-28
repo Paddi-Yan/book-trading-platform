@@ -3,6 +3,7 @@ package com.turing.service.impl;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.turing.common.ElasticsearchIndex;
 import com.turing.common.HttpStatusCode;
 import com.turing.common.RedisKey;
 import com.turing.common.Result;
@@ -11,18 +12,28 @@ import com.turing.entity.User;
 import com.turing.entity.dto.WechatUserInfo;
 import com.turing.entity.dto.BookDto;
 import com.turing.entity.dto.UserDto;
+import com.turing.entity.elasticsearch.BookDoc;
 import com.turing.interceptor.UserThreadLocal;
 import com.turing.mapper.BookMapper;
 import com.turing.mapper.UserMapper;
 import com.turing.service.UserService;
 import com.turing.service.WechatService;
 import com.turing.utils.JWTUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -31,6 +42,8 @@ import java.util.concurrent.TimeUnit;
  * @CreateTime: 2022年01月20日 01:26:10
  */
 @Service
+@Slf4j
+@Transactional(rollbackFor = Exception.class)
 public class UserServiceImpl implements UserService
 {
 
@@ -46,6 +59,8 @@ public class UserServiceImpl implements UserService
     @Autowired
     private BookMapper bookMapper;
 
+    @Autowired
+    private RestHighLevelClient client;
     /*
     @Override
     public String getSessionId(String code)
@@ -163,6 +178,18 @@ public class UserServiceImpl implements UserService
         Book book = new Book();
         book.transform(bookDto);
         bookMapper.updateById(book);
+        BookDoc bookDoc = new BookDoc();
+        bookDoc.transform(book);
+        String json = JSON.toJSONString(bookDoc);
+        UpdateRequest request = new UpdateRequest(ElasticsearchIndex.BOOK, String.valueOf(bookDoc.getId()));
+        request.doc(json, XContentType.JSON);
+        try {
+            client.update(request, RequestOptions.DEFAULT);
+            log.info("Elasticsearch修改书籍信息成功:{}",bookDoc);
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.warn("Elasticsearch修改书籍信息失败:{}",bookDoc);
+        }
         return new Result().success(bookDto);
     }
 
@@ -181,6 +208,16 @@ public class UserServiceImpl implements UserService
         //将书籍标记为已失效
         book.setStatus(0);
         bookMapper.updateById(book);
+
+        UpdateRequest request = new UpdateRequest(ElasticsearchIndex.BOOK, String.valueOf(book.getId()));
+        request.doc(XContentType.JSON,"status",0);
+        try {
+            client.update(request, RequestOptions.DEFAULT);
+            log.info("Elasticsearch修改编号为[{}]的书籍信息状态成功,目前状态为已下架",book.getId());
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.warn("Elasticsearch修改编号为[{}]的书籍信息失败:",book.getId());
+        }
         return new Result().success(book);
     }
 
@@ -203,6 +240,14 @@ public class UserServiceImpl implements UserService
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("图书状态为有效,无法删除");
         }
         bookMapper.delete(queryWrapper);
+        DeleteRequest request = new DeleteRequest(ElasticsearchIndex.BOOK, String.valueOf(book.getId()));
+        try {
+            client.delete(request,RequestOptions.DEFAULT);
+            log.info("Elasticsearch删除书籍信息成功:{}",book);
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.warn("Elasticsearch删除书籍信息失败:{}",book);
+        }
         return new Result().success(book);
     }
 

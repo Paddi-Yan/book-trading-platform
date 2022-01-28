@@ -51,6 +51,9 @@ public class BookDto implements Serializable
     @ApiModelProperty(required = true)
     private String description;
 
+    @ApiModelProperty(required = true)
+    private Double price;
+
     /**
      * 图书类型
      * 0表示出书

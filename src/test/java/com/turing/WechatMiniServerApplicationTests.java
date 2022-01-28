@@ -1,20 +1,26 @@
 package com.turing;
 
+import com.turing.common.ElasticsearchIndex;
 import com.turing.common.HttpStatusCode;
 import com.turing.common.Result;
+import com.turing.entity.User;
 import com.turing.entity.dto.BookDto;
+import com.turing.entity.elasticsearch.RequestParams;
 import com.turing.mapper.BookMapper;
-import com.turing.service.BookService;
-import com.turing.service.FavoriteService;
-import com.turing.service.TagService;
-import com.turing.service.UserService;
+import com.turing.service.*;
 import com.turing.service.impl.BookServiceImpl;
+import com.turing.service.impl.WechatServiceImpl;
 import com.turing.utils.FTPUtils;
 import com.turing.utils.JWTUtils;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.GetIndexRequest;
+import org.elasticsearch.client.indices.GetIndexResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -164,6 +170,84 @@ class WechatMiniServerApplicationTests
         {
             System.out.println("合法");
         }
+    }
+
+    @Autowired
+    private RestHighLevelClient client;
+
+    @Test
+    public void esTest()
+    {
+
+            BookDto bookDto = new BookDto();
+            bookDto.setDescription("99成新");
+            bookDto.setName("Rocket技术内幕");
+            ArrayList<String> tagList = new ArrayList<>();
+            tagList.add("1");
+            tagList.add("2");
+            bookDto.setTagIdList(tagList);
+            ArrayList<String> photoList = new ArrayList<>();
+            photoList.add("images1");
+            photoList.add("images2");
+            bookDto.setPhotoList(photoList);
+            bookDto.setUserId(1);
+            bookDto.setId(22);
+            bookDto.setType(1);
+            bookDto.setPrice((99.0));
+            userService.updateBookInfo(bookDto);
+    }
+
+    @Autowired
+    private ElasticsearchService elasticsearchService;
+
+    @Test
+    public void searchTest()
+    {
+        RequestParams requestParams = new RequestParams();
+        requestParams.setType("book");
+        requestParams.setContent("英语读写三");
+        requestParams.setMinPrice(20);
+        requestParams.setMaxPrice(40);
+        Result search = elasticsearchService.search(requestParams);
+        System.out.println(search);
+    }
+
+    @Test
+    public void updateBook()
+    {
+        userService.withdrawBookInfo(20,1);
+    }
+
+    @Test
+    public void deleteBook()
+    {
+        userService.deleteHistory(20,1);
+    }
+
+    @Autowired
+    private WechatServiceImpl wechatService;
+
+    @Test
+    public void registryTest()
+    {
+        User user = new User();
+        user.setNickname("秃头懒狗");
+        user.setUsername("小明");
+        user.setPassword("123456");
+        user.setGender("男");
+        user.setAvatar("Sabrina's avatar");
+        user.setMobile("15848134876");
+        wechatService.registry(user);
+    }
+
+    @Test
+    public void searchUserTest()
+    {
+        RequestParams requestParams = new RequestParams();
+        requestParams.setType(ElasticsearchIndex.USER);
+        requestParams.setContent("Tayl");
+        Result search = elasticsearchService.search(requestParams);
+        System.out.println(search);
     }
 
 

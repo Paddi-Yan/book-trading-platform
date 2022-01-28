@@ -12,10 +12,6 @@ import com.turing.entity.dto.WechatLoginInfo;
  */
 public interface UserService
 {
-
-
-
-
     Result getUserInfo( Boolean refreshToken);
 
     User getUserById(Integer userId);

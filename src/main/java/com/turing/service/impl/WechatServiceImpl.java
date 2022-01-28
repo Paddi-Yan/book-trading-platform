@@ -5,6 +5,7 @@ import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.turing.common.ElasticsearchIndex;
 import com.turing.common.HttpStatusCode;
 import com.turing.common.RedisKey;
 import com.turing.common.Result;
@@ -12,6 +13,7 @@ import com.turing.entity.User;
 import com.turing.entity.dto.UserDto;
 import com.turing.entity.dto.WechatLoginInfo;
 import com.turing.entity.dto.WechatUserInfo;
+import com.turing.entity.elasticsearch.UserDoc;
 import com.turing.mapper.UserMapper;
 import com.turing.service.UserService;
 import com.turing.service.WechatService;
@@ -19,6 +21,10 @@ import com.turing.utils.DecryptUtils;
 import com.turing.utils.IPUtils;
 import com.turing.utils.JWTUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -58,6 +64,9 @@ public class WechatServiceImpl implements WechatService
 
     @Value("${wechat-mini.secret}")
     private String secret;
+
+    @Autowired
+    private RestHighLevelClient client;
 
     @Override
     public String getSessionKey(String code)
@@ -116,16 +125,29 @@ public class WechatServiceImpl implements WechatService
         return new Result().success(userDto);
     }
 
-    private Result registry(User user)
+    @Override
+    public Result registry(User user)
     {
+        UserDoc userDoc = null;
         try {
             userMapper.insert(user);
+            IndexRequest request = new IndexRequest(ElasticsearchIndex.USER).id(user.getId().toString());
+            userDoc = new UserDoc();
+            userDoc.transform(user);
+            String jsonString = JSON.toJSONString(userDoc);
+            request.source(jsonString, XContentType.JSON);
+            client.index(request, RequestOptions.DEFAULT);
+            log.info("Elasticsearch插入用户数据成功===>>>{}",userDoc);
             return this.login(user);
         } catch (Exception e) {
             e.printStackTrace();
+            log.warn("Elasticsearch插入用户数据失败===>>>{}",userDoc);
             return new Result().fail(HttpStatusCode.ERROR);
         }
     }
+
+
+
 /*
     @Override
     public String wechatDecrypt(String encryptedData, String sessionId, String vi) throws Exception

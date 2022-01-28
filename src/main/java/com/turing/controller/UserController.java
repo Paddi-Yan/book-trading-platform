@@ -40,9 +40,6 @@ public class UserController
     @Autowired
     private BookService bookService;
 
-
-
-
     @ResponseBody
     @GetMapping("/getUserInfo")
     @ApiOperation("获取用户信息")

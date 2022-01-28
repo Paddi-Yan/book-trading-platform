@@ -2,6 +2,7 @@ package com.turing.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.turing.common.HttpStatusCode;
 import com.turing.common.RedisKey;
 import com.turing.common.Result;
@@ -81,13 +82,18 @@ public class WechatAuthController
         String token = request.getHeader(JWTUtils.AUTH_HEADER_KEY);
         token = token.replace(JWTUtils.TOKEN_PREFIX,"");
         String json = (String) redisTemplate.opsForValue().get(RedisKey.TOKEN + token);
+        if (StringUtils.isBlank(json))
+        {
+            return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR);
+        }
         UserDto userDto = JSON.parseObject(json, UserDto.class);
         if (!userId.equals(userDto.getId()))
         {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR);
         }
         redisTemplate.delete(RedisKey.TOKEN + token);
-        return new Result().success(null);
+        log.info("[请求结束]用户{}注销登录成功",userId);
+        return new Result().success("用户注销成功!");
     }
 
 }

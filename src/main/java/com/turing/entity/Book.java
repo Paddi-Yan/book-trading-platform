@@ -51,6 +51,8 @@ public class Book
     @TableField(value = "created_time")
     private Timestamp createdTime;
 
+    private Double price;
+
     /**
      * 图书当前状态
      * 0-已失效

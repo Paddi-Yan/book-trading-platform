@@ -11,7 +11,7 @@
  Target Server Version : 80023
  File Encoding         : 65001
 
- Date: 24/01/2022 13:45:29
+ Date: 28/01/2022 21:05:55
 */
 
 SET NAMES utf8mb4;
@@ -32,13 +32,6 @@ CREATE TABLE `address`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of address
--- ----------------------------
-INSERT INTO `address` VALUES (1, 1, '懒羊羊', '15015984462', '广东省深圳市福田区', '华强北街道');
-INSERT INTO `address` VALUES (2, 1, '懒羊羊快递员', '15015988888', '广东省湛江市麻章区', '海大路一号厂东母羊大学');
-INSERT INTO `address` VALUES (3, 1, '蕉太狼', '15089128888', '广东省汕头市潮南区', '湖光路海大路饭店');
-
--- ----------------------------
 -- Table structure for book
 -- ----------------------------
 DROP TABLE IF EXISTS `book`;
@@ -52,16 +45,9 @@ CREATE TABLE `book`  (
   `user_id` int NULL DEFAULT NULL COMMENT '所属用户id',
   `created_time` datetime NULL DEFAULT NULL COMMENT '提交时间',
   `status` smallint NULL DEFAULT 1 COMMENT '书籍当前状态 0-已失效 1-有效',
+  `price` double(10, 2) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of book
--- ----------------------------
-INSERT INTO `book` VALUES (1, 'Java核心技术卷', 'path1,path2', '描述', '1,2', 1, 1, '2022-01-21 20:07:59', 1);
-INSERT INTO `book` VALUES (2, 'RocketMQ技术内幕', 'path3,path4', '描述', '1,2', 1, 1, '2022-01-21 20:22:03', 1);
-INSERT INTO `book` VALUES (5, '新修改的书名1', '/2022-01-22/5647b667-47ee-4c60-b341-4bb5a39af09a-ByteDance.jpg', '新修改的描述信息1', '1,2,3', 0, 1, '2022-01-22 15:11:57', 1);
-INSERT INTO `book` VALUES (6, 'SpringCloud从入门到实战', '/2022-01-23/3ccd099b-5c13-415c-9152-e5f3d710c9fb-ByteDance.jpg,/2022-01-23/c5614a7d-fd8a-47eb-93bb-1939655b673b-Python.jpg', '简介', '1,2', 1, 1, '2022-01-23 13:53:24', 1);
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for favorite
@@ -73,11 +59,7 @@ CREATE TABLE `favorite`  (
   `book_id` int NULL DEFAULT NULL,
   `created_time` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of favorite
--- ----------------------------
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tag
@@ -88,16 +70,7 @@ CREATE TABLE `tag`  (
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '标签名',
   `user_id` int NULL DEFAULT NULL COMMENT '自定义标签用户标识-存在该标识仅供用户自行使用',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of tag
--- ----------------------------
-INSERT INTO `tag` VALUES (1, '编程', 1);
-INSERT INTO `tag` VALUES (2, '教材', NULL);
-INSERT INTO `tag` VALUES (3, '武侠', 1);
-INSERT INTO `tag` VALUES (4, 'Java', 1);
-INSERT INTO `tag` VALUES (5, 'Python', 1);
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for user
@@ -119,11 +92,6 @@ CREATE TABLE `user`  (
   `country` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `register_time` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of user
--- ----------------------------
-INSERT INTO `user` VALUES (1, 'admin', 'admin', '123456', '男', NULL, NULL, NULL, '2,1,5', NULL, NULL, NULL, NULL, NULL);
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;

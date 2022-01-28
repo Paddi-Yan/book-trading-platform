@@ -1,6 +1,7 @@
 package com.turing.service;
 
 import com.turing.common.Result;
+import com.turing.entity.User;
 import com.turing.entity.dto.WechatLoginInfo;
 
 /**
@@ -12,4 +13,6 @@ public interface WechatService
     String getSessionKey(String code);
 
     Result wechatLogin(String openid, String sessionKey, WechatLoginInfo wechatLoginInfo);
+
+    public Result registry(User user);
 }

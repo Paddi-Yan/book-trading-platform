@@ -15,7 +15,7 @@ public interface BookService
      * 上传图书信息
      * @return
      */
-    Result uploadBookInfo(BookDto bookDto) throws ParseException;
+    Result uploadBookInfo(BookDto bookDto);
 
     Result getBookInfo(Integer type);
 
