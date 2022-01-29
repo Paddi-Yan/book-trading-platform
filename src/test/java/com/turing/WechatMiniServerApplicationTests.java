@@ -1,10 +1,14 @@
 package com.turing;
 
+import com.alibaba.fastjson.JSON;
 import com.turing.common.ElasticsearchIndex;
 import com.turing.common.HttpStatusCode;
+import com.turing.common.RedisKey;
 import com.turing.common.Result;
 import com.turing.entity.User;
+import com.turing.entity.dto.ActivityDto;
 import com.turing.entity.dto.BookDto;
+import com.turing.entity.dto.UserDto;
 import com.turing.entity.elasticsearch.RequestParams;
 import com.turing.mapper.BookMapper;
 import com.turing.service.*;
@@ -19,6 +23,7 @@ import org.elasticsearch.client.indices.GetIndexResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -250,5 +255,29 @@ class WechatMiniServerApplicationTests
         System.out.println(search);
     }
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+    @Test
+    public void redisTest()
+    {
+
+    }
+
+    @Test
+    public void redisSetTest()
+    {
+        User user = new User();
+        user.setId(1L);
+        user.setNickname("admin");
+        wechatService.login(user);
+    }
+
+    @Test
+    public void redisGetTest()
+    {
+        UserDto userDto = (UserDto) redisTemplate.opsForValue()
+                .get("token_eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNjQ0MDU0MTkxfQ.UbmPkixMS_fUXdkzRm6hZ03qNdOfp9GkdqgBAHBNViw");
+        System.out.println(userDto);
+    }
 
 }

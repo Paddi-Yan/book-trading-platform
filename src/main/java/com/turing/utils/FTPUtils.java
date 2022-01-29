@@ -30,15 +30,21 @@ public class FTPUtils
     public static String upload(MultipartFile file) throws Exception
     {
         InputStream inputStream = null;
+        String filename = null;
         try {
             init();
             inputStream = file.getInputStream();
-            String filename = file.getOriginalFilename();
+            filename = file.getOriginalFilename();
             filename = UUID.randomUUID() + "-" + filename;
-            client.storeFile(filename,inputStream);
+            boolean storeFile = client.storeFile(filename, inputStream);
+            if (storeFile)
+            {
+                log.info("文件[{}]上传成功!",(DATE+filename));
+            }
             return DATE+filename;
         } catch (IOException e) {
             e.printStackTrace();
+            log.warn("文件[{}]上传失败!",(DATE+filename));
         }finally {
             destroy();
         }
@@ -49,17 +55,15 @@ public class FTPUtils
     {
         init();
         String filepath = filePath.substring(0, filePath.lastIndexOf("/")+1);
-        System.out.println("filepath："+FTP_DELETE_BASEPATH+filepath);
         client.changeWorkingDirectory(FTP_DELETE_BASEPATH+filepath);
         String filename = filePath.substring(filePath.lastIndexOf("/")+1);
-        System.out.println("filename："+filename);
         boolean deleteStates = client.deleteFile(filename);
         if (!deleteStates)
         {
-            log.warn("文件[{}]删除失败",filepath+filename);
+            log.warn("文件[{}]删除失败!",filepath+filename);
         }else
         {
-            log.info("文件[{}]删除成功",filepath+filename);
+            log.info("文件[{}]删除成功!",filepath+filename);
         }
         destroy();
     }

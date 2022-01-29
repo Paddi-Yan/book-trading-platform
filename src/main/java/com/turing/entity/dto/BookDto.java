@@ -66,6 +66,7 @@ public class BookDto implements Serializable
     private Integer userId;
 
     @ApiModelProperty(hidden = true)
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date createdTime;
 
     public void transform(Book book)

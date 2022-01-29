@@ -69,14 +69,14 @@ public class TokenVerifyInterceptor implements HandlerInterceptor
             return false;
         }
         //token验证通过-从redis中获取用户信息
-        String userInfoJson = (String) redisTemplate.opsForValue().get(RedisKey.TOKEN + token);
-        if (StringUtils.isBlank(userInfoJson))
+        UserDto userDto = (UserDto) redisTemplate.opsForValue().get(RedisKey.TOKEN + token);
+        if (userDto == null)
         {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(new Result().fail(HttpStatusCode.UNAUTHORIZED)));
             return false;
         }
-        UserDto userDto = JSON.parseObject(userInfoJson, UserDto.class);
+
         //得到UserInfo-放入ThreadLocal-方便之后的程序获取
         UserThreadLocal.putUserInfoToThread(userDto);
         return true;

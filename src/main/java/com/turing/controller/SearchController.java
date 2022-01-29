@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/search")
-@Api(value = "搜索书籍/用户/社区接口",tags = "SearchController")
+@Api(description = "搜索书籍/用户/社区接口",tags = "SearchController")
 @Slf4j
 public class SearchController
 {

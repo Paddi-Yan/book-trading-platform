@@ -112,20 +112,22 @@ public class WechatServiceImpl implements WechatService
 
     }
 
-    private Result login(User user)
+
+    public Result login(User user)
     {
         //签发Token
         String token = JWTUtils.sign(user.getId());
         UserDto userDto = new UserDto();
         userDto.transform(user);
         userDto.setToken(token);
+        System.out.println(RedisKey.TOKEN+token);
         //存入缓存
         redisTemplate.opsForValue().set(RedisKey.TOKEN+token,userDto,7, TimeUnit.DAYS);
 
         return new Result().success(userDto);
     }
 
-    @Override
+
     public Result registry(User user)
     {
         UserDoc userDoc = null;

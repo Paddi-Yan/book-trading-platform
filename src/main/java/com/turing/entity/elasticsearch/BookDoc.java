@@ -9,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,8 +21,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(indexName = "book")
-public class BookDoc
+public class BookDoc implements Serializable
 {
+    private static final long serialVersionUID = -3710952780775682734L;
     @Field(value = "id")
     private Integer id;
     private String name;

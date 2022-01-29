@@ -49,6 +49,8 @@ public class Book
     private Integer userId;
 
     @TableField(value = "created_time")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Timestamp createdTime;
 
     private Double price;

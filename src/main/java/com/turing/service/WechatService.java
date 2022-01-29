@@ -14,5 +14,5 @@ public interface WechatService
 
     Result wechatLogin(String openid, String sessionKey, WechatLoginInfo wechatLoginInfo);
 
-    public Result registry(User user);
+
 }
