@@ -14,6 +14,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -52,7 +53,7 @@ public class BookDto implements Serializable
     private String description;
 
     @ApiModelProperty(required = true)
-    private Double price;
+    private BigDecimal price;
 
     /**
      * 图书类型

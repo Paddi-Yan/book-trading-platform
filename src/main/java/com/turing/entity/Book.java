@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
@@ -53,7 +54,7 @@ public class Book
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Timestamp createdTime;
 
-    private Double price;
+    private BigDecimal price;
 
     /**
      * 图书当前状态

@@ -1,0 +1,50 @@
+package com.turing.entity;
+
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+/**
+ * @Author: 又蠢又笨的懒羊羊程序猿
+ * @CreateTime: 2022年01月30日 15:47:08
+ */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class Cart
+{
+    private Long id;
+    private Long userId;
+    private Integer bookId;
+    private String bookName;
+    private String bookPhoto;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date addTime;
+    private int deleted;
+    private BigDecimal price;
+
+    public void transform(User user, Book book)
+    {
+        this.setUserId(user.getId());
+        this.setBookId(book.getId());
+        this.setBookName(book.getName());
+        this.setBookPhoto(book.getPhoto());
+        this.setPrice(book.getPrice());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = simpleDateFormat.parse(simpleDateFormat.format(new Date()),new ParsePosition(0));
+        System.out.println(date.toString());
+        this.setAddTime(date);
+
+    }
+}

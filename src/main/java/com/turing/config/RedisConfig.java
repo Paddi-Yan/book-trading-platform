@@ -31,6 +31,9 @@ public class RedisConfig
 
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
         redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+        //支持事务
+        redisTemplate.setEnableTransactionSupport(true);
         //初始化参数和初始化工作
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
