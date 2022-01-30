@@ -56,7 +56,7 @@ public class PostController {
     }
 
     @ResponseBody
-    @ApiOperation("点赞")
+    @ApiOperation("帖子点赞")
     @PostMapping("/like")
     @NoNeedToAuthorized
     public Result like(Integer postId, Integer userId) {
