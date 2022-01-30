@@ -27,6 +27,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ApiModel(value = "BookDto",description = "书籍信息")
 public class BookDto implements Serializable
 {
     private static final long serialVersionUID = 3036528493640743015L;

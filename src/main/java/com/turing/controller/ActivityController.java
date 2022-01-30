@@ -37,6 +37,7 @@ public class ActivityController
     @GetMapping("/get")
     @ApiOperation("获取所有活动信息")
     @ApiImplicitParam(name = "refresh",value = "是否需要刷新缓存数据 不传参-默认不需要 1-需要进行缓存刷新",required = false)
+    @NoNeedToAuthorized
     public Result getActivity(Integer refresh)
     {
         return activityService.getActivity(refresh);

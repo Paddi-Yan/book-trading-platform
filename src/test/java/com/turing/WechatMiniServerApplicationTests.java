@@ -198,7 +198,7 @@ class WechatMiniServerApplicationTests
             bookDto.setUserId(1);
             bookDto.setId(22);
             bookDto.setType(1);
-            bookDto.setPrice((99.0));
+
             userService.updateBookInfo(bookDto);
     }
 

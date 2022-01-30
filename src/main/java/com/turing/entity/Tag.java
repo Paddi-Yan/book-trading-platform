@@ -18,7 +18,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel("书籍分类标签")
+@ApiModel(value = "Tag",description = "分类标签信息")
 public class Tag implements Serializable
 {
     @TableId(value = "id",type = IdType.AUTO)

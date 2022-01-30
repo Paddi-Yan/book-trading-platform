@@ -25,7 +25,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel("用户信息")
+@ApiModel(value = "User",description = "用户信息")
 public class User
 {
     @TableId(value = "id",type = IdType.AUTO)

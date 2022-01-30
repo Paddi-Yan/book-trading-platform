@@ -16,7 +16,7 @@ import java.sql.Timestamp;
  * @CreateTime: 2022年01月22日 18:55:05
  */
 @Data
-@ApiModel("用户收藏信息")
+@ApiModel(value = "Favorite",description = "收藏夹信息")
 public class Favorite
 {
     @TableId(value = "id",type = IdType.AUTO)

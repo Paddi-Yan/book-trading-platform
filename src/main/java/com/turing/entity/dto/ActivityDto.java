@@ -21,7 +21,7 @@ import java.util.*;
  * @CreateTime: 2022年01月29日 13:08:15
  */
 @Data
-@ApiModel("活动信息")
+@ApiModel(value = "ActivityDto",description = "活动信息")
 @AllArgsConstructor
 @NoArgsConstructor
 public class ActivityDto implements Serializable

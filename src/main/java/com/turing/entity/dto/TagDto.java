@@ -1,6 +1,7 @@
 package com.turing.entity.dto;
 
 import com.turing.entity.Tag;
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -13,6 +14,7 @@ import java.util.List;
  */
 @Data
 @AllArgsConstructor
+@ApiModel(value = "TagDto",description = "分类标签信息")
 public class TagDto implements Serializable
 {
     private static final long serialVersionUID = 3732396808614348602L;

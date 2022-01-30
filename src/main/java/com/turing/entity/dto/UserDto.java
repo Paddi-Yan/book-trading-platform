@@ -1,6 +1,7 @@
 package com.turing.entity.dto;
 
 import com.turing.entity.User;
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ApiModel(value = "UserDto",description = "用户信息")
 public class UserDto implements Serializable
 {
     private static final long serialVersionUID = -3992971186990897627L;

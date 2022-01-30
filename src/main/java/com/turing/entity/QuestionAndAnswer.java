@@ -1,6 +1,7 @@
 package com.turing.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,6 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName("qa")
+@ApiModel(value = "QuestionAndAnswer",description = "活动Q&A信息")
 public class QuestionAndAnswer
 {
     @ApiModelProperty(hidden = true)

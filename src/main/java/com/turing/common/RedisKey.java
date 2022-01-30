@@ -11,7 +11,7 @@ public class RedisKey
     public static final String ACTIVITY_HASH_KEY = "activity";
     public static final String ACTIVITY_HASH_FIELD = "activity_";
     public static final String CART_KEY = "cart_";
-    public static final String  TOKEN = "token_";
+
     public static final String  LIKE_POST = "like_post_";
     public static final String  LIKE_USER = "like_user_";
 }

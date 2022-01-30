@@ -15,7 +15,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel("微信用户信息")
+@ApiModel("WechatUserInfo")
 public class WechatUserInfo implements Serializable
 {
     private static final long serialVersionUID = 8243422323180274689L;

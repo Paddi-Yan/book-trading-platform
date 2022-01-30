@@ -15,7 +15,7 @@ import io.swagger.annotations.ApiModelProperty;
  * @author qds
  * @since 2022-01-26
  */
-@ApiModel(value = "Post对象", description = "")
+@ApiModel(value = "Post", description = "帖子信息")
 public class Post implements Serializable {
 
     private static final long serialVersionUID = 1L;

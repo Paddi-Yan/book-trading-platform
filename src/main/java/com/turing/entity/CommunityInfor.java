@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName("community_infor")
-@ApiModel(value = "CommunityInfor对象", description = "")
+@ApiModel(value = "CommunityInfor", description = "社区信息")
 public class CommunityInfor implements Serializable {
 
     private static final long serialVersionUID = 1L;
