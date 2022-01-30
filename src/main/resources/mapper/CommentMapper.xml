@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.turing.mapper.CommentMapper">
+
+    <select id="getCommentByPostId" resultType="com.turing.entity.Comment" parameterType="integer">
+        select i.* from comment i
+                            left join post p on p.post_id = i.post_id
+        where i.post_id = #{postId}
+    </select>
+    <select id="getCommentByUserId" resultType="com.turing.entity.Comment" parameterType="integer">
+        select i.* from comment i
+                            left join user u on u.id = i.user_id
+        where user_id = #{userId}
+    </select>
+</mapper>
