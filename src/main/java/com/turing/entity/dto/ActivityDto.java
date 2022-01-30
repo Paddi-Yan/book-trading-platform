@@ -76,6 +76,7 @@ public class ActivityDto implements Serializable
                 this.setStatus(ActivityStatus.EFFECTIVE.getStatus());
                 break;
         }
+        this.setTags(Arrays.asList(activity.getTags().split(",")));
         for (QuestionAndAnswer questionAndAnswer : QAList) {
             this.QAInfo.put(questionAndAnswer.getQuestion(),questionAndAnswer.getAnswer());
         }
@@ -84,8 +85,14 @@ public class ActivityDto implements Serializable
 
     private void init()
     {
-        this.userDto = new UserDto();
-        this.QAInfo = new HashMap<>();
+        if (userDto == null)
+        {
+            this.userDto = new UserDto();
+        }
+        if (QAInfo == null)
+        {
+            this.QAInfo = new HashMap<>();
+        }
     }
 
 }

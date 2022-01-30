@@ -19,4 +19,9 @@ public interface ActivityService
 
     Result getActivity(Integer refresh);
 
+    Result updateActivity(User user, ActivityDto activityDto, QuestionAndAnswer[] questionAndAnswers);
+
+    Result passExamine(Long id);
+
+    Result withdraw(Long id);
 }

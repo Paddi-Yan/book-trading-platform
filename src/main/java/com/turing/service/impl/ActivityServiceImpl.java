@@ -96,10 +96,7 @@ public class ActivityServiceImpl implements ActivityService
             }
             activity.setCover(cover);
             activityMapper.updateById(activity);
-            List<QuestionAndAnswer> questionAndAnswerList = qaMapper.selectList(new QueryWrapper<QuestionAndAnswer>().eq("activity_id", activity.getId()));
-            User user = userMapper.selectById(activity.getUserId());
-            ActivityDto activityDto = new ActivityDto();
-            activityDto.transform(activity,questionAndAnswerList,user);
+            ActivityDto activityDto = buildDtoResult(activity);
             // 如果审核中 不存入缓存
             if (!ActivityStatus.EXAMINE.getStatus().equals(activityDto.getStatus()))
             {
@@ -111,6 +108,15 @@ public class ActivityServiceImpl implements ActivityService
             e.printStackTrace();
             return new Result().fail(HttpStatusCode.ERROR).message("活动封面上传失败,请稍后重试！");
         }
+    }
+
+    private ActivityDto buildDtoResult(Activity activity)
+    {
+        List<QuestionAndAnswer> questionAndAnswerList = qaMapper.selectList(new QueryWrapper<QuestionAndAnswer>().eq("activity_id", activity.getId()));
+        User user = userMapper.selectById(activity.getUserId());
+        ActivityDto activityDto = new ActivityDto();
+        activityDto.transform(activity,questionAndAnswerList,user);
+        return activityDto;
     }
 
     @Override
@@ -135,6 +141,71 @@ public class ActivityServiceImpl implements ActivityService
             return new Result().success(map);
         }
         return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR);
+    }
+
+    @Override
+    public Result updateActivity(User user, ActivityDto activityDto, QuestionAndAnswer[] questionAndAnswers)
+    {
+        Activity activity = activityMapper.selectOne(new QueryWrapper<Activity>().eq("id",activityDto.getId()).eq("user_id",user.getId()));
+        if (activity == null)
+        {
+            return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("不存在该活动信息,携带参数有误！");
+        }
+        String cover = activity.getCover();
+        activityDto.setCover(cover);
+        activity.transform(activityDto);
+        //状态更新为审核中
+        activity.setStatus(Byte.valueOf(String.valueOf(ActivityStatus.EXAMINE.getCode())));
+        activityMapper.updateById(activity);
+        qaMapper.delete(new QueryWrapper<QuestionAndAnswer>().eq("activity_id",activity.getId()));
+        for (QuestionAndAnswer questionAndAnswer : questionAndAnswers) {
+            questionAndAnswer.setActivityId(activity.getId());
+            qaMapper.insert(questionAndAnswer);
+        }
+        List<QuestionAndAnswer> list = new ArrayList<>();
+        Collections.addAll(list,questionAndAnswers);
+        ActivityDto result = new ActivityDto();
+        result.transform(activity,list,user);
+        System.out.println(result.getTags());
+        System.out.println(result.getCover());
+        //状态更新为审核中需要将其从缓存移除
+        redisTemplate.opsForHash().delete(RedisKey.ACTIVITY_HASH_KEY,RedisKey.ACTIVITY_HASH_FIELD+activity.getId());
+        return new Result().success(result);
+    }
+
+    @Override
+    public Result passExamine(Long id)
+    {
+        Activity activity = activityMapper.selectById(id);
+        if (activity == null)
+        {
+            return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("不存在该活动信息,审核通过失败!");
+        }
+        activity.setStatus(Byte.valueOf(String.valueOf(ActivityStatus.EFFECTIVE.getCode())));
+        //更新审核状态为有效
+        activityMapper.updateById(activity);
+        ActivityDto activityDto = buildDtoResult(activity);
+        //加载到Redis缓存
+        redisTemplate.opsForHash().put(RedisKey.ACTIVITY_HASH_KEY,RedisKey.ACTIVITY_HASH_FIELD+id,activityDto);
+        log.info("活动[{}]通过审核,加载到缓存中!",activityDto);
+        return new Result().success(activityDto);
+    }
+
+    @Override
+    public Result withdraw(Long id)
+    {
+        Activity activity = activityMapper.selectById(id);
+        if (activity == null)
+        {
+            return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("不存在该活动信息,审核通过失败!");
+        }
+        activity.setStatus(Byte.valueOf(String.valueOf(ActivityStatus.INVALID.getCode())));
+        //更新审核状态为无效
+        activityMapper.updateById(activity);
+        //从缓存中删除
+        redisTemplate.opsForHash().delete(RedisKey.ACTIVITY_HASH_KEY, RedisKey.ACTIVITY_HASH_FIELD + id);
+        log.info("活动[{}]已下架,从Redis缓存删除中!",activity);
+        return new Result().success(activity);
     }
 
 

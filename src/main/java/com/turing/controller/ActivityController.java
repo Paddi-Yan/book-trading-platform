@@ -34,7 +34,7 @@ public class ActivityController
     private UserService userService;
 
     @ResponseBody
-    @GetMapping("/getActivity")
+    @GetMapping("/get")
     @ApiOperation("获取所有活动信息")
     @ApiImplicitParam(name = "refresh",value = "是否需要刷新缓存数据 不传参-默认不需要 1-需要进行缓存刷新",required = false)
     public Result getActivity(Integer refresh)
@@ -43,7 +43,7 @@ public class ActivityController
     }
 
     @ResponseBody
-    @PostMapping(value = "/addActivity/{userId}")
+    @PostMapping(value = "/add/{userId}")
     @ApiOperation("添加活动信息")
     public Result addActivity(ActivityDto activityDto,
                               @RequestBody QuestionAndAnswer[] questionAndAnswers,
@@ -62,12 +62,54 @@ public class ActivityController
     }
 
     @ResponseBody
-    @PostMapping(value = "/operateActivityCover/{id}",headers = "content-type=multipart/form-data;")
+    @PostMapping(value = "/operateCover/{id}",headers = "content-type=multipart/form-data;")
     @ApiOperation("添加/修改活动封面图片")
     public Result operateActivityCover(@RequestParam MultipartFile file,@PathVariable(name = "id",required = true)Long id)
     {
         return activityService.operateActivityCover(file,id);
     }
 
+    @ResponseBody
+    @PutMapping(value = "/update/{userId}/{id}")
+    @ApiOperation("修改活动信息")
+    public Result updateActivity(@PathVariable Long userId,
+                                 @PathVariable Long id,
+                                 ActivityDto activityDto,
+                                 @RequestBody QuestionAndAnswer[] questionAndAnswers)
+    {
+        if (activityDto.getStartTime().after(activityDto.getDeadline()))
+        {
+            return new Result().fail(HttpStatusCode.ERROR).message("活动截止日期与活动开始日期参数错误!");
+        }
+        User user = userService.getUserById(Math.toIntExact(userId));
+        if (user == null)
+        {
+            return new Result().fail(HttpStatusCode.ERROR).message("不存在该用户!");
+        }
+        if (questionAndAnswers==null || questionAndAnswers.length == 0)
+        {
+            return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("常见问答信息不得为空！");
+        }
+        activityDto.setId(id);
+        return activityService.updateActivity(user,activityDto,questionAndAnswers);
+    }
 
+    @ResponseBody
+    @PostMapping("/passExamine/{id}")
+    @ApiOperation("通过活动审核")
+    @NoNeedToAuthorized
+    public Result passExamine(@PathVariable Long id)
+    {
+        return activityService.passExamine(id);
+    }
+
+
+    @ResponseBody
+    @DeleteMapping("/withdraw/{id}")
+    @ApiOperation("下架活动")
+    @NoNeedToAuthorized
+    public Result withdraw(@PathVariable Long id)
+    {
+        return activityService.withdraw(id);
+    }
 }
