@@ -30,6 +30,10 @@ import java.util.List;
 @NoArgsConstructor
 public class PostDto implements Serializable {
 
+    @ApiModelProperty(hidden = true)
+    @TableId(value = "post_id", type = IdType.AUTO)
+    private Long postId;
+
     @ApiModelProperty("社区id")
     private Long communityId;
 
@@ -44,6 +48,12 @@ public class PostDto implements Serializable {
 
     @ApiModelProperty("帖子内容")
     private String content;
+
+    @ApiModelProperty(hidden = true)
+    private Integer type;
+
+    @ApiModelProperty(hidden = true)
+    private LocalDateTime createTime;
 
     @ApiModelProperty(hidden = true)
     private List<String> photoList;
