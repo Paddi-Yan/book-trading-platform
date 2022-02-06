@@ -68,8 +68,8 @@ public class CommunityController {
             return new Result().fail(HttpStatusCode.ERROR).message("文件接收失败,无法上传!");
         }
         communityInfor.setComPhoto(upload);
-        communityService.createCommunity(communityInfor);
-        return new Result().success(null);
+
+        return communityService.createCommunity(communityInfor);
 
     }
 

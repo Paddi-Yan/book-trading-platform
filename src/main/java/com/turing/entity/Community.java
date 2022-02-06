@@ -3,6 +3,9 @@ package com.turing.entity;
 import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * <p>
@@ -12,6 +15,9 @@ import io.swagger.annotations.ApiModelProperty;
  * @author qds
  * @since 2022-01-26
  */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @ApiModel(value = "Community对象", description = "")
 public class Community implements Serializable {
 
@@ -24,27 +30,5 @@ public class Community implements Serializable {
     private Long communityId;
 
 
-    public Long getUserId() {
-        return userId;
-    }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Long getCommunityId() {
-        return communityId;
-    }
-
-    public void setCommunityId(Long communityId) {
-        this.communityId = communityId;
-    }
-
-    @Override
-    public String toString() {
-        return "Community{" +
-        "userId=" + userId +
-        ", communityId=" + communityId +
-        "}";
-    }
 }

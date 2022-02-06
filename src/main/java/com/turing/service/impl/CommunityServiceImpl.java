@@ -2,6 +2,7 @@ package com.turing.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.turing.common.HttpStatusCode;
 import com.turing.common.Result;
 import com.turing.entity.Community;
 import com.turing.entity.CommunityInfor;

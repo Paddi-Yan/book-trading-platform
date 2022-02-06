@@ -6,6 +6,9 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * <p>
@@ -15,11 +18,15 @@ import io.swagger.annotations.ApiModelProperty;
  * @author qds
  * @since 2022-01-26
  */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @ApiModel(value = "Comment对象", description = "")
 public class Comment implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @ApiModelProperty(hidden = true)
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
@@ -30,57 +37,8 @@ public class Comment implements Serializable {
 
     private String content;
 
+    @ApiModelProperty(hidden = true)
     private LocalDateTime createTime;
 
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getPostId() {
-        return postId;
-    }
-
-    public void setPostId(Long postId) {
-        this.postId = postId;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public LocalDateTime getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(LocalDateTime createTime) {
-        this.createTime = createTime;
-    }
-
-    @Override
-    public String toString() {
-        return "Comment{" +
-        "id=" + id +
-        ", postId=" + postId +
-        ", userId=" + userId +
-        ", content=" + content +
-        ", createTime=" + createTime +
-        "}";
-    }
 }

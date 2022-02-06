@@ -16,4 +16,6 @@ public interface ICommentService extends IService<Comment> {
 
     Result getCommentByPostId(Integer postId);
 
+    Result sentComment(Comment comment);
+
 }
