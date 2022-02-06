@@ -1,9 +1,11 @@
 package com.turing.controller;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.turing.common.ElasticsearchIndex;
 import com.turing.common.HttpStatusCode;
 import com.turing.common.Result;
 import com.turing.entity.elasticsearch.RequestParams;
+import com.turing.interceptor.NoNeedToAuthorized;
 import com.turing.service.ElasticsearchService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,16 +29,19 @@ public class SearchController
     @PostMapping("/search")
     @ApiOperation("搜索获取信息")
     @ResponseBody
+    @NoNeedToAuthorized
     private Result search(@RequestBody RequestParams params)
     {
-        if (params.getType() == null)
+        String type = params.getType();
+        if (StringUtils.isBlank(type))
         {
-            return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("必须携带参数[key]指定搜索类型");
+            return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("必须携带参数[type]指定搜索类型");
         }
-        String key = params.getType();
-        if (key != ElasticsearchIndex.BOOK && key!= ElasticsearchIndex.USER && key != ElasticsearchIndex.COMMUNITY)
+        if (!ElasticsearchIndex.BOOK.equals(type)
+                && !ElasticsearchIndex.COMMUNITY.equals(type)
+                && !ElasticsearchIndex.USER.equals(type))
         {
-            return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("携带参数[key]错误! <书籍:book 用户:user 社群:community>");
+            return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("携带参数[type]错误! <书籍:book 用户:user 社群:community>");
         }
         return elasticsearchService.search(params);
     }

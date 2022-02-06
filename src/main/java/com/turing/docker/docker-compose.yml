@@ -1,0 +1,65 @@
+services:
+  wechatminiserver:
+    image: wechatminiserver:1.0
+    container_name: wechatminiserver
+    ports:
+      - "8080:8080"
+    volumes:
+      - /soft/docker/wxminiserver:/data
+    networks:
+      - lyy_network
+    depends_on:
+      - elasticsearch
+      - redis
+      - mysql
+
+  elasticsearch:
+    image: elasticsearch:7.16.3
+    container_name: elasticsearch
+    networks:
+      - lyy_network
+    restart: always
+    environment:
+      - cluster.name=elasticsearch   #集群名称为elasticsearch
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" #jvm内存分配为512MB
+      - "discovery.type=single-node" #单节点启动
+      - "TZ=Asia/Shanghai"
+    volumes:
+      - /soft/docker/elasticsearch/data:/usr/share/elasticsearch/data
+      - /soft/docker/elasticsearch/logs:/usr/share/elasticsearch/logs
+      - /soft/docker/elasticsearch/plugins:/usr/share/elasticsearch/plugins
+    ports:
+      - 9200:9200
+      - 9300:9300
+
+  redis:
+    image: redis:6.0.8
+    ports:
+      - "6379:6379"
+    volumes:
+      - /soft/docker/redis/redis.conf:/etc/redis/redis.conf
+      - /soft/docker/redis/data:/data
+    networks:
+      - lyy_network
+    command: redis-server /etc/redis/redis.conf
+
+  mysql:
+    image: mysql:8.0.27
+    networks:
+      - lyy_network
+    environment:
+      MYSQL_ROOT_PASSWORD: '123456'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'no'
+      MYSQL_DATABASE: 'wx_mini_server'
+      MYSQL_USER: 'root'
+      MYSQL_PASSWORD: '123456'
+    ports:
+      - "3306:3306"
+    volumes:
+      - /soft/docker/mysql/db:/var/lib/mysql
+      - /soft/docker/mysql/conf/my.cnf:/etc/my.cnf
+      - /soft/docker/mysql/init:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=mysql_native_password
+networks:
+  lyy_network:

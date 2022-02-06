@@ -36,7 +36,6 @@ public class AddressController
     @PostMapping("/addAddress")
     @ResponseBody
     @ApiOperation("添加常用收货地址")
-    @NoNeedToAuthorized
     public Result addAddress(@RequestBody Address address)
     {
         User user = userService.getUserById(address.getUserId());

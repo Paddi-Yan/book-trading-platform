@@ -78,7 +78,6 @@ public class TagsController
     @ResponseBody
     @PutMapping ("/editTag")
     @ApiOperation("编辑自定义分类标签")
-    @NoNeedToAuthorized
     public Result editTag(@RequestBody Tag tag)
     {
         User user = userService.getUserById(tag.getUserId());

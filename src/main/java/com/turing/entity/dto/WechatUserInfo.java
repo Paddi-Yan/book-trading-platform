@@ -20,8 +20,12 @@ public class WechatUserInfo implements Serializable
 {
     private static final long serialVersionUID = 8243422323180274689L;
 
+    @ApiModelProperty(hidden = true)
     private String openid;
+
     private String nickname;
+
+    @ApiModelProperty(hidden = true)
     private String lastLoginIP;
     /**
      * 头像

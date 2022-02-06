@@ -37,7 +37,6 @@ public class CartController
     @ResponseBody
     @PostMapping("/add/{bookId}/{userId}")
     @ApiOperation("添加购物车")
-    @NoNeedToAuthorized
     public Result addCart(@PathVariable Integer bookId,@PathVariable Long userId)
     {
         User user = userService.getUserById(Math.toIntExact(userId));
@@ -52,7 +51,6 @@ public class CartController
     @GetMapping("/get/{userId}")
     @ApiOperation("获取用户的购物车")
     @ApiImplicitParam(name = "refresh",value = "是否需要刷新缓存数据 不传参-默认不需要 1-需要进行缓存刷新",required = false)
-    @NoNeedToAuthorized
     public Result getCart(@PathVariable Long userId,Integer refresh)
     {
         if (checkUserInfo(userId)) {
@@ -65,7 +63,6 @@ public class CartController
     @ResponseBody
     @DeleteMapping("/delete/{userId}")
     @ApiOperation("单个/批量删除购物车物品")
-    @NoNeedToAuthorized
     public Result deleteCart(@PathVariable Long userId, @RequestBody List<Long> cartIdList)
     {
         if (checkUserInfo(userId)) {

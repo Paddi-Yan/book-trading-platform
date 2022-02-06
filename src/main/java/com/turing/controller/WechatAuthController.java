@@ -37,9 +37,6 @@ public class WechatAuthController
     private WechatService wechatService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private RedisTemplate redisTemplate;
 
     @PostMapping("/login")

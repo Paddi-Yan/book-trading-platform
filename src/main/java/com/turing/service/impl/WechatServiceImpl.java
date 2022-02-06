@@ -127,7 +127,6 @@ public class WechatServiceImpl implements WechatService
         return new Result().success(userDto);
     }
 
-
     public Result registry(User user)
     {
         UserDoc userDoc = null;

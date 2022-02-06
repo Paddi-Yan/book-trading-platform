@@ -38,7 +38,6 @@ public class BookController
     @PostMapping(value = "/upload",headers = "content-type=multipart/form-data;")
     @ResponseBody
     @ApiOperation("上传书籍信息")
-    @NoNeedToAuthorized
     public Result uploadBookInfo(BookDto bookDto,@RequestParam(name = "files") MultipartFile[] files) throws ParseException
     {
         if (bookDto.getUserId() == null)

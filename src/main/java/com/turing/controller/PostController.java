@@ -58,7 +58,6 @@ public class PostController {
     @ResponseBody
     @ApiOperation("帖子点赞")
     @PostMapping("/like")
-    @NoNeedToAuthorized
     public Result like(Integer postId, Integer userId) {
         likeService.like(postId, userId);
         long count = likeService.likeCount(postId);

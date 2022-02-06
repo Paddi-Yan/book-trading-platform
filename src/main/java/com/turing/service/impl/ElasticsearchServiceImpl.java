@@ -85,7 +85,7 @@ public class ElasticsearchServiceImpl implements ElasticsearchService
         // 价格
         if (minPrice!=null && maxPrice!=null)
         {
-            maxPrice = maxPrice == 0 ? Integer.MAX_VALUE : maxPrice;
+            maxPrice = maxPrice.intValue() == 0 ? Integer.MAX_VALUE : maxPrice;
             queryBuilder.must(QueryBuilders.rangeQuery("price").gte(minPrice).lte(maxPrice));
         }
         request.source().query(queryBuilder);
