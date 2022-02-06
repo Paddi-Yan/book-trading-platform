@@ -40,5 +40,12 @@ public class CommunityServiceImpl extends ServiceImpl<CommunityMapper, Community
         return new Result().success(communityInfor);
     }
 
+    @Override
+    public Result createCommunity(CommunityInfor communityInfor) {
+        communityInforMapper.insert(communityInfor);
+        return new Result().success(null);
+    }
+
+
 
 }

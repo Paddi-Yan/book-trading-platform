@@ -43,6 +43,15 @@ public class CommunityController {
 
     }
 
+    @ResponseBody
+    @ApiOperation("创建社区")
+    @PostMapping("/createCommunityInformation")
+    @NoNeedToAuthorized
+    public Result createCommunityInformation(Integer userId,String name,String information) {
+return null;
+
+    }
+
 
 }
 
