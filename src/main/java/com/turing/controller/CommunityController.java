@@ -1,14 +1,20 @@
 package com.turing.controller;
 
 
+import com.turing.common.HttpStatusCode;
 import com.turing.common.Result;
+import com.turing.entity.CommunityInfor;
 import com.turing.interceptor.NoNeedToAuthorized;
 import com.turing.service.ICommunityService;
+import com.turing.utils.FTPUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * <p>
@@ -47,8 +53,23 @@ public class CommunityController {
     @ApiOperation("创建社区")
     @PostMapping("/createCommunityInformation")
     @NoNeedToAuthorized
-    public Result createCommunityInformation(Integer userId,String name,String information) {
-return null;
+    public Result createCommunityInformation(CommunityInfor communityInfor, MultipartFile photo) {
+
+        //上传图片 返回图片地址
+        String upload = null;
+        if (photo != null) {
+            try {
+                upload = FTPUtils.upload(photo);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new Result().fail(HttpStatusCode.ERROR).message(e.getMessage());
+            }
+        } else {
+            return new Result().fail(HttpStatusCode.ERROR).message("文件接收失败,无法上传!");
+        }
+        communityInfor.setComPhoto(upload);
+        communityService.createCommunity(communityInfor);
+        return new Result().success(null);
 
     }
 
