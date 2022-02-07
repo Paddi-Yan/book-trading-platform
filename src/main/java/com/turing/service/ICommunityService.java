@@ -1,11 +1,8 @@
 package com.turing.service;
 
-import com.turing.common.Result;
-import com.turing.entity.Community;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.turing.common.Result;
 import com.turing.entity.CommunityInfor;
-import com.turing.mapper.CommunityMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * <p>
@@ -25,5 +22,7 @@ public interface ICommunityService extends IService<CommunityInfor> {
     Result getCommunityByType(Integer type);
 
     Result getCommunityRecommend();
+
+    Result getCommunityHot();
 
 }

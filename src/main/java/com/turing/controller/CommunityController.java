@@ -90,9 +90,7 @@ public class CommunityController {
     @PostMapping("/getCommunityHot")
     @NoNeedToAuthorized
     public Result getCommunityHot() {
-        /*
-        未完
-         */
+//        return communityService.getCommunityHot();
         return communityService.getCommunityRecommend();
     }
 

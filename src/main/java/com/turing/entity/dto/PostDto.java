@@ -2,9 +2,7 @@ package com.turing.entity.dto;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.turing.entity.Book;
 import com.turing.entity.Post;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,7 +17,7 @@ import java.util.List;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author qds
@@ -58,15 +56,22 @@ public class PostDto implements Serializable {
     @ApiModelProperty(hidden = true)
     private List<String> photoList;
 
+    @ApiModelProperty(hidden = true)
+    private Integer commentCount;
 
-    public void transform(Post post)
-    {
-        BeanUtils.copyProperties(post,this);
+    @ApiModelProperty(hidden = true)
+    private Integer likeCount;
+
+
+    public void transform(Post post, Integer commentCount, Integer likeCount) {
+        BeanUtils.copyProperties(post, this);
+        this.setCommentCount(commentCount);
+        this.setLikeCount(likeCount);
+
         List<String> photos = new ArrayList<>();
         if (post.getPhoto() == null) return;
         photos = Arrays.asList(post.getPhoto().split(","));
         this.setPhotoList(photos);
-
     }
 
 }
