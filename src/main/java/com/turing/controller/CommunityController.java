@@ -78,7 +78,7 @@ public class CommunityController {
 
 
     @ResponseBody
-    @ApiOperation("获取某一分类的社区")
+    @ApiOperation("获取某一分类的社区,以图片中：言情为1，武侠为2，后面依次。热门和推荐单独接口")
     @PostMapping("/getCommunity")
     @NoNeedToAuthorized
     public Result getCommunity(Integer type) {
@@ -102,6 +102,5 @@ public class CommunityController {
         //推荐关注数前20的社区
         return communityService.getCommunityRecommend();
     }
-
 }
 

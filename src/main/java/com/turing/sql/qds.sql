@@ -72,7 +72,7 @@ CREATE TABLE `community_infor` (
 
 /*Data for the table `community_infor` */
 
-insert  into `community_infor`(`com_id`,`com_name`,`com_photo`,`com_infor`,`user_id`,`kind`) values (1,'第一社区',NULL,'hhhhhhhh',1,0),(2,'第二社区',NULL,'hhhhh',2,0),(3,'第三社区',NULL,'hhhhhhhhhhhh',1,0),(4,'wrew',NULL,'tqteq',2,0);
+insert  into `community_infor`(`com_id`,`com_name`,`com_photo`,`com_infor`,`user_id`,`kind`) values (1,'第一社区',NULL,'hhhhhhhh',1,1),(2,'第二社区',NULL,'hhhhh',2,2),(3,'第三社区',NULL,'hhhhhhhhhhhh',1,1),(4,'wrew',NULL,'tqteq',2,3);
 
 /*Table structure for table `post` */
 
