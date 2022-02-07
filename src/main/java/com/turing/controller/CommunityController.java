@@ -5,6 +5,7 @@ import com.turing.common.HttpStatusCode;
 import com.turing.common.Result;
 import com.turing.entity.CommunityInfor;
 import com.turing.interceptor.NoNeedToAuthorized;
+import com.turing.service.HotService;
 import com.turing.service.ICommunityService;
 import com.turing.utils.FTPUtils;
 import io.swagger.annotations.Api;
@@ -30,13 +31,15 @@ import org.springframework.web.multipart.MultipartFile;
 public class CommunityController {
     @Autowired
     ICommunityService communityService;
+    @Autowired
+    HotService hotService;
 
 
     @ResponseBody
     @ApiOperation("获取用户关注的社群")
-    @PostMapping("/getCommunity")
+    @PostMapping("/getCommunityByUser")
     @NoNeedToAuthorized
-    public Result getCommunity(Integer userId) {
+    public Result getCommunityByUser(Integer userId) {
         return communityService.getCommunity(userId);
     }
 
@@ -45,8 +48,8 @@ public class CommunityController {
     @PostMapping("/getCommunityInformation")
     @NoNeedToAuthorized
     public Result getCommunityInformation(Integer communityId) {
+        hotService.hotAdd(communityId,1);
         return communityService.getCommunityInformation(communityId);
-
     }
 
     @ResponseBody
@@ -73,6 +76,34 @@ public class CommunityController {
 
     }
 
+
+    @ResponseBody
+    @ApiOperation("获取某一分类的社区")
+    @PostMapping("/getCommunity")
+    @NoNeedToAuthorized
+    public Result getCommunity(Integer type) {
+        return communityService.getCommunityByType(type);
+    }
+
+    @ResponseBody
+    @ApiOperation("获取热门社区")
+    @PostMapping("/getCommunityHot")
+    @NoNeedToAuthorized
+    public Result getCommunityHot() {
+        /*
+        未完
+         */
+        return communityService.getCommunityRecommend();
+    }
+
+    @ResponseBody
+    @ApiOperation("获取推荐社区")
+    @PostMapping("/getCommunityRecommend")
+    @NoNeedToAuthorized
+    public Result getCommunityRecommend() {
+        //推荐关注数前20的社区
+        return communityService.getCommunityRecommend();
+    }
 
 }
 

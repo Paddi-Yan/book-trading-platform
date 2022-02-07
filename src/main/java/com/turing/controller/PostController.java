@@ -7,6 +7,7 @@ import com.turing.entity.Comment;
 import com.turing.entity.Post;
 import com.turing.entity.dto.PostDto;
 import com.turing.interceptor.NoNeedToAuthorized;
+import com.turing.service.HotService;
 import com.turing.service.ICommentService;
 import com.turing.service.IPostService;
 import com.turing.service.LikeService;
@@ -46,6 +47,8 @@ public class PostController {
 
     @Autowired
     LikeService likeService;
+    @Autowired
+    HotService hotService;
 
     @ResponseBody
     @ApiOperation("获取社群所有帖子")
@@ -60,6 +63,8 @@ public class PostController {
     @PostMapping("/getCommentByPostId")
     @NoNeedToAuthorized
     public Result getCommentByPostId(Integer postId) {
+        Post post = postService.getById(postId);
+        hotService.hotAdd(Math.toIntExact(post.getCommunityId()),1);
         return commentService.getCommentByPostId(postId);
     }
 
@@ -68,6 +73,8 @@ public class PostController {
     @PostMapping("/sendComment")
     @NoNeedToAuthorized
     public Result sendComment(Comment comment) {
+        Post post = postService.getById(comment.getPostId());
+        hotService.hotAdd(Math.toIntExact(post.getCommunityId()),5);
         return commentService.sentComment(comment);
     }
 
@@ -91,6 +98,7 @@ public class PostController {
                 List.add(upload);
             }
             postDto.setPhotoList(List);
+            hotService.hotAdd(Math.toIntExact(postDto.getCommunityId()),5);
         }
         return postService.sendPost(postDto);
     }

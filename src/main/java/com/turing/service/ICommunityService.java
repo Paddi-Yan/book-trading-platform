@@ -15,11 +15,15 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author qds
  * @since 2022-01-26
  */
-public interface ICommunityService extends IService<Community> {
+public interface ICommunityService extends IService<CommunityInfor> {
     Result getCommunity(Integer userId);
 
     Result getCommunityInformation(Integer communityId);
 
     Result createCommunity(CommunityInfor communityInfor);
+
+    Result getCommunityByType(Integer type);
+
+    Result getCommunityRecommend();
 
 }

@@ -44,5 +44,10 @@ public class CommunityInfor implements Serializable {
     @ApiModelProperty("创建人id")
     private Long userId;
 
+    @ApiModelProperty("类别")
+    private int kind;
+
+
+
 
 }
