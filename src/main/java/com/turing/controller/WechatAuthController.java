@@ -22,6 +22,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Author: 又蠢又笨的懒羊羊程序猿
@@ -46,17 +49,20 @@ public class WechatAuthController
     @ApiOperation("微信一键登录")
     @ResponseBody
     @NoNeedToAuthorized
-    public Result login(@RequestBody WechatLoginInfo wechatLoginInfo, HttpServletRequest request)
+    public Result login(@RequestParam String code,
+                        @RequestParam String nickname ,
+                        @RequestParam String avatar ,
+                        @RequestParam String gender,
+                        HttpServletRequest request)
     {
-        String code = wechatLoginInfo.getCode();
-        WechatUserInfo wechatUserInfo = wechatLoginInfo.getWechatUserInfo();
-        if (code == null || wechatUserInfo == null)
+        if (code == null)
         {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("请求携带参数不完整,登录失败!");
         }
+        //获取用户sessionKey和openid
         String result = wechatService.getSessionKey(code);
         JSONObject jsonObject = JSON.parseObject(result);
-        log.info("调用微信登录凭证校验接口返回结果:{}",jsonObject);
+        log.info("调用微信登录凭证校验接口返回结果:{}",jsonObject.toJSONString());
         String openid = jsonObject.getString("openid");
         log.info("用户唯一标识:{}",openid);
         String sessionKey = jsonObject.getString("session_key");
@@ -65,14 +71,35 @@ public class WechatAuthController
         {
             return new Result().fail(HttpStatusCode.ERROR).message("调用官方接口错误!");
         }
+        //登录逻辑
+        WechatUserInfo wechatUserInfo = new WechatUserInfo();
         wechatUserInfo.setLastLoginIP(IPUtils.getIpAddr(request));
-        return wechatService.wechatLogin(openid,sessionKey,wechatLoginInfo);
+        wechatUserInfo.setAvatar(avatar);
+        wechatUserInfo.setNickname(nickname);
+        wechatUserInfo.setOpenid(openid);
+        wechatUserInfo.setGender(gender);
+        Result loginResult = wechatService.wechatLogin(openid, sessionKey, wechatUserInfo);
+        redisTemplate.opsForValue().set(RedisKey.SESSION_KEY+sessionKey,openid,7, TimeUnit.DAYS);
+        Map<String,Object> resultMap = new HashMap<>();
+        resultMap.put("openid",openid);
+        resultMap.put("sessionKey",sessionKey);
+        resultMap.put("userInfo",loginResult.getData());
+        return new Result().success(resultMap);
     }
 
-    @PostMapping("/logout")
+    @GetMapping("/getWechatUserInfo")
+    @ApiOperation("获取微信用户信息")
+    @ResponseBody
+    public Result getUserInfo(@RequestBody WechatUserInfo wechatUserInfo)
+    {
+        return wechatService.getUserInfo(wechatUserInfo);
+    }
+
+
+    @PostMapping("/logout/{userId}")
     @ApiOperation("用户注销登录")
     @ResponseBody
-    public Result logout(@RequestParam Integer userId,HttpServletRequest request)
+    public Result logout(@PathVariable Long userId,HttpServletRequest request)
     {
         log.info("[请求开始]注销登录,请求参数，userId:{}", userId);
         if (userId == null)
@@ -81,12 +108,7 @@ public class WechatAuthController
         }
         String token = request.getHeader(JWTUtils.AUTH_HEADER_KEY);
         token = token.replace(JWTUtils.TOKEN_PREFIX,"");
-        String json = (String) redisTemplate.opsForValue().get(RedisKey.TOKEN + token);
-        if (StringUtils.isBlank(json))
-        {
-            return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR);
-        }
-        UserDto userDto = JSON.parseObject(json, UserDto.class);
+        UserDto userDto = (UserDto) redisTemplate.opsForValue().get(RedisKey.TOKEN + token);
         if (!userId.equals(userDto.getId()))
         {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR);

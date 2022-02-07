@@ -38,7 +38,6 @@ public class BookController
     @PostMapping(value = "/upload",headers = "content-type=multipart/form-data;")
     @ResponseBody
     @ApiOperation("上传书籍信息")
-    @NoNeedToAuthorized
     public Result uploadBookInfo(BookDto bookDto,@RequestParam(name = "files") MultipartFile[] files) throws ParseException
     {
         if (bookDto.getUserId() == null)
@@ -86,7 +85,14 @@ public class BookController
         return bookService.getBookInfo(type);
     }
 
-
+    @ResponseBody
+    @GetMapping("/getBookByTag")
+    @ApiOperation("根据分类获取图书列表")
+    @NoNeedToAuthorized
+    public Result getBookByTags(Integer tag)
+    {
+        return bookService.getBookInfoByTag(tag);
+    }
 
 
     /*

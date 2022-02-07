@@ -23,7 +23,6 @@ public class UserDto implements Serializable
     private Long id;
     private String nickname;
     private String username;
-    private String password;
     private String gender;
     private String mobile;
     private String openid;
@@ -38,7 +37,6 @@ public class UserDto implements Serializable
         this.nickname = wechatUserInfo.getNickname();
         this.avatar = wechatUserInfo.getAvatar();
         this.username = "";
-        this.password = "";
         this.mobile = "";
         this.gender = String.valueOf(wechatUserInfo.getGender());
         this.openid = wechatUserInfo.getOpenid();
@@ -48,7 +46,6 @@ public class UserDto implements Serializable
     {
         BeanUtils.copyProperties(user,this);
         this.username = "";
-        this.password = "";
         this.mobile = "";
     }
 

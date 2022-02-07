@@ -5,10 +5,12 @@ import com.turing.common.ElasticsearchIndex;
 import com.turing.common.HttpStatusCode;
 import com.turing.common.RedisKey;
 import com.turing.common.Result;
+import com.turing.entity.Book;
 import com.turing.entity.User;
 import com.turing.entity.dto.ActivityDto;
 import com.turing.entity.dto.BookDto;
 import com.turing.entity.dto.UserDto;
+import com.turing.entity.elasticsearch.BookDoc;
 import com.turing.entity.elasticsearch.RequestParams;
 import com.turing.mapper.BookMapper;
 import com.turing.service.*;
@@ -16,10 +18,12 @@ import com.turing.service.impl.BookServiceImpl;
 import com.turing.service.impl.WechatServiceImpl;
 import com.turing.utils.FTPUtils;
 import com.turing.utils.JWTUtils;
+import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.indices.GetIndexResponse;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -183,23 +187,21 @@ class WechatMiniServerApplicationTests
     @Test
     public void esTest()
     {
+        List<Book> books = bookMapper.selectList(null);
+        for (Book book : books) {
+            BookDoc bookDto = new BookDoc();
+            bookDto.transform(book);
+            IndexRequest request = new IndexRequest("book").id(String.valueOf(book.getId()));
+            String string = JSON.toJSONString(bookDto);
+            System.out.println(string);
+            request.source(string, XContentType.JSON);
+            try {
+                client.index(request,RequestOptions.DEFAULT);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
-            BookDto bookDto = new BookDto();
-            bookDto.setDescription("99成新");
-            bookDto.setName("Rocket技术内幕");
-            ArrayList<String> tagList = new ArrayList<>();
-            tagList.add("1");
-            tagList.add("2");
-            bookDto.setTagIdList(tagList);
-            ArrayList<String> photoList = new ArrayList<>();
-            photoList.add("images1");
-            photoList.add("images2");
-            bookDto.setPhotoList(photoList);
-            bookDto.setUserId(1);
-            bookDto.setId(22);
-            bookDto.setType(1);
-
-            userService.updateBookInfo(bookDto);
     }
 
     @Autowired

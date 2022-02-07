@@ -66,7 +66,6 @@ public class FavoriteController
     @ApiOperation("获取用户收藏")
     @PostMapping("/getFavorites")
     @ApiImplicitParam(name = "userId",value = "用户编号",required = true)
-    @NoNeedToAuthorized
     public Result getFavorites(Integer userId)
     {
         User user = userService.getUserById(userId);
@@ -85,7 +84,6 @@ public class FavoriteController
                     @ApiImplicitParam(name = "userId",value = "用户编号",required = true)
             }
     )
-    @NoNeedToAuthorized
     public Result deleteFavorite(Integer userId,@RequestBody List<Integer> favoriteList)
     {
         User user = userService.getUserById(userId);

@@ -14,4 +14,5 @@ public class RedisKey
 
     public static final String  LIKE_POST = "like_post_";
     public static final String  LIKE_USER = "like_user_";
+    public static final String SESSION_KEY = "session_key_";
 }

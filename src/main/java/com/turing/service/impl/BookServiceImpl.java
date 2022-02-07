@@ -46,8 +46,9 @@ public class BookServiceImpl implements BookService
     {
         Book book = new Book();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Timestamp createdTime = Timestamp.valueOf(simpleDateFormat.format(new Date()));
         book.transform(bookDto);
-        book.setCreatedTime(Timestamp.valueOf(simpleDateFormat.format(new Date())));
+        book.setCreatedTime(createdTime);
         bookMapper.insert(book);
         //Elasticsearch用的Document实体
         BookDoc bookDoc = new BookDoc();
@@ -64,6 +65,7 @@ public class BookServiceImpl implements BookService
         }
 
         bookDto.setId(book.getId());
+        bookDto.setCreatedTime(createdTime);
         return new Result().success(bookDto);
     }
 
@@ -71,9 +73,6 @@ public class BookServiceImpl implements BookService
     public Result getBookInfo(Integer type)
     {
         List<Book> books = bookMapper.selectList(new QueryWrapper<Book>().eq("type", type).eq("status",1));
-        for (Book book : books) {
-            System.out.println(book);
-        }
         ArrayList<BookDto> bookDtoList = new ArrayList<>();
         for (Book book : books) {
             BookDto bookDto = new BookDto();
@@ -89,5 +88,16 @@ public class BookServiceImpl implements BookService
     {
         Book book = bookMapper.selectById(bookId);
         return new Result().success(book);
+    }
+
+    @Override
+    public Result getBookInfoByTag(Integer tag)
+    {
+        List<Book> books = bookMapper.selectList(new QueryWrapper<Book>().likeLeft("tag_id", tag)
+                .or()
+                .likeRight("tag_id", tag)
+                .or()
+                .like("tag_id", tag));
+        return new Result().success(books);
     }
 }
