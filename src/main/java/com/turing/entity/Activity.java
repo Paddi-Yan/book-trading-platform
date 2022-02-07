@@ -1,5 +1,6 @@
 package com.turing.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.turing.entity.dto.ActivityDto;
@@ -23,6 +24,7 @@ import java.util.List;
 @ApiModel(value = "Activity",description = "活动信息")
 public class Activity
 {
+    @TableId(type = IdType.AUTO)
     private Long id;
     /**
      * 活动名称

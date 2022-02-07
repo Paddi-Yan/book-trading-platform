@@ -16,4 +16,8 @@ public interface TagService
     Result deleteTag(Integer userId, Integer tagId);
 
     Result editTag(Tag tag);
+
+    Result getPublicTags();
+
+
 }

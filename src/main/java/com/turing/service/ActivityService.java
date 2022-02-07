@@ -17,11 +17,13 @@ public interface ActivityService
 
     Result operateActivityCover(MultipartFile file, Long id);
 
-    Result getActivity(Integer refresh);
+    Result getActivity();
 
     Result updateActivity(User user, ActivityDto activityDto, QuestionAndAnswer[] questionAndAnswers);
 
     Result passExamine(Long id);
 
     Result withdraw(Long id);
+
+    Result getActivityById(Long id);
 }

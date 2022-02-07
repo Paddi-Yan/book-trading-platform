@@ -1,5 +1,7 @@
 package com.turing.entity.dto;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.turing.common.ActivityStatus;
 import com.turing.entity.Activity;

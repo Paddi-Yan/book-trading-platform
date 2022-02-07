@@ -31,10 +31,20 @@ public class TagsController
 
     @ResponseBody
     @GetMapping("/getAllTags")
-    @ApiOperation("获取所有书籍标签分类")
+    @ApiOperation("获取用户自定义书籍标签分类")
     public Result getAllTags(@RequestParam(required = true,name = "userId")Integer userId)
     {
         return tagService.getAllTags(userId);
+    }
+
+
+    @ResponseBody
+    @GetMapping("/getPublicTags")
+    @ApiOperation("获取书籍标签分类")
+    @NoNeedToAuthorized
+    public Result getPublicTags()
+    {
+        return tagService.getPublicTags();
     }
 
     @ResponseBody

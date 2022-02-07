@@ -2,6 +2,8 @@ package com.turing.entity;
 
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
@@ -25,6 +27,7 @@ import java.util.Date;
 @ApiModel(value = "Cart",description = "购物车信息")
 public class Cart
 {
+    @TableId(type = IdType.AUTO)
     private Long id;
     private Long userId;
     private Integer bookId;

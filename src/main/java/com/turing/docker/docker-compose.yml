@@ -22,7 +22,7 @@ services:
     environment:
       - cluster.name=elasticsearch   #集群名称为elasticsearch
       - xpack.security.enabled=false
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" #jvm内存分配为512MB
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m" #jvm内存分配为256MB
       - "discovery.type=single-node" #单节点启动
       - "TZ=Asia/Shanghai"
     volumes:

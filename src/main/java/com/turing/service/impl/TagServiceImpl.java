@@ -2,6 +2,7 @@ package com.turing.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.turing.common.HttpStatusCode;
+import com.turing.common.RedisKey;
 import com.turing.common.Result;
 import com.turing.entity.Tag;
 import com.turing.entity.User;
@@ -11,9 +12,15 @@ import com.turing.mapper.UserMapper;
 import com.turing.service.TagService;
 import com.turing.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.core.RedisOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Author: 又蠢又笨的懒羊羊程序猿
@@ -27,6 +34,9 @@ public class TagServiceImpl implements TagService
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     public Result getAllTags(Integer userId)
@@ -63,5 +73,29 @@ public class TagServiceImpl implements TagService
     {
          tagMapper.update(tag,new QueryWrapper<Tag>().eq("id",tag.getId()).eq("user_id",tag.getUserId()));
          return new Result().success(tag);
+    }
+
+    @Override
+    public Result getPublicTags()
+    {
+        Map tagMap = redisTemplate.opsForHash().entries(RedisKey.TAG_HASH_KEY);
+        if (tagMap.isEmpty() || tagMap == null)
+        {
+            List<Tag> tagList = tagMapper.selectList(new QueryWrapper<Tag>().isNull("user_id"));
+            redisTemplate.execute(new SessionCallback()
+            {
+                @Override
+                public Object execute(RedisOperations operations) throws DataAccessException
+                {
+                    for (Tag tag : tagList) {
+                        operations.opsForHash().put(RedisKey.TAG_HASH_KEY,RedisKey.TAG_HASH_FIELD+tag.getId(),tag.getName());
+                    }
+                    operations.expire(RedisKey.TAG_HASH_KEY,1, TimeUnit.DAYS);
+                    return null;
+                }
+            });
+            tagMap = redisTemplate.opsForHash().entries(RedisKey.TAG_HASH_KEY);
+        }
+        return new Result().success(tagMap);
     }
 }

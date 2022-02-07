@@ -16,7 +16,10 @@ import com.turing.service.ActivityService;
 import com.turing.utils.FTPUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Author: 又蠢又笨的懒羊羊程序猿
@@ -96,7 +100,7 @@ public class ActivityServiceImpl implements ActivityService
             }
             activity.setCover(cover);
             activityMapper.updateById(activity);
-            ActivityDto activityDto = buildDtoResult(activity);
+            ActivityDto activityDto = buildActivityDto(activity);
             // 如果审核中 不存入缓存
             if (!ActivityStatus.EXAMINE.getStatus().equals(activityDto.getStatus()))
             {
@@ -110,38 +114,59 @@ public class ActivityServiceImpl implements ActivityService
         }
     }
 
-    private ActivityDto buildDtoResult(Activity activity)
-    {
-        List<QuestionAndAnswer> questionAndAnswerList = qaMapper.selectList(new QueryWrapper<QuestionAndAnswer>().eq("activity_id", activity.getId()));
-        User user = userMapper.selectById(activity.getUserId());
-        ActivityDto activityDto = new ActivityDto();
-        activityDto.transform(activity,questionAndAnswerList,user);
-        return activityDto;
-    }
-
     @Override
-    public Result getActivity(Integer refresh)
+    public Result getActivity()
     {
-        if (refresh == null || refresh.intValue() != 1)
-        {
-            Map result = redisTemplate.opsForHash().entries(RedisKey.ACTIVITY_HASH_KEY);
-            return new Result().success(result);
-        }else if (refresh.intValue() == 1)
+        Map result = redisTemplate.opsForHash().entries(RedisKey.ACTIVITY_HASH_KEY);
+        if (result == null || result.isEmpty())
         {
             List<Activity> activityList = activityMapper.selectList(new QueryWrapper<Activity>().eq("status","1"));
             Map<String,ActivityDto> map = new HashMap<>();
             for (Activity activity : activityList) {
-                ActivityDto activityDto = new ActivityDto();
-                User user = userMapper.selectById(activity.getUserId());
-                List<QuestionAndAnswer> QAList = qaMapper.selectList(new QueryWrapper<QuestionAndAnswer>().eq("activity_id", activity.getId()));
-                activityDto.transform(activity,QAList,user);
+                ActivityDto activityDto = buildActivityDto(activity);
                 map.put(RedisKey.ACTIVITY_HASH_FIELD+activity.getId(),activityDto);
             }
-            redisTemplate.opsForHash().putAll(RedisKey.ACTIVITY_HASH_KEY,map);
-            return new Result().success(map);
+            redisTemplate.execute(new SessionCallback()
+            {
+                @Override
+                public Object execute(RedisOperations operations) throws DataAccessException
+                {
+                    operations.opsForHash().putAll(RedisKey.ACTIVITY_HASH_KEY,map);
+                    return null;
+                }
+            });
+            result = map;
         }
-        return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR);
+        return new Result().success(result);
     }
+
+    private ActivityDto buildActivityDto(Activity activity)
+    {
+        ActivityDto activityDto = new ActivityDto();
+        User user = userMapper.selectById(activity.getUserId());
+        List<QuestionAndAnswer> QAList = qaMapper.selectList(new QueryWrapper<QuestionAndAnswer>().eq("activity_id", activity.getId()));
+        activityDto.transform(activity,QAList,user);
+        return activityDto;
+    }
+
+    @Override
+    public Result getActivityById(Long id)
+    {
+        ActivityDto activityDto = (ActivityDto) redisTemplate.opsForHash().get(RedisKey.ACTIVITY_HASH_KEY, RedisKey.TAG_HASH_FIELD + id);
+        if (activityDto == null)
+        {
+            Activity activity = activityMapper.selectById(id);
+            if (activity == null)
+            {
+                return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("不存在该活动!");
+            }
+            activityDto = buildActivityDto(activity);
+            redisTemplate.opsForHash().put(RedisKey.ACTIVITY_HASH_KEY,RedisKey.ACTIVITY_HASH_FIELD+activity.getId(),activityDto);
+        }
+        return new Result().success(activityDto);
+    }
+
+
 
     @Override
     public Result updateActivity(User user, ActivityDto activityDto, QuestionAndAnswer[] questionAndAnswers)
@@ -184,7 +209,7 @@ public class ActivityServiceImpl implements ActivityService
         activity.setStatus(Byte.valueOf(String.valueOf(ActivityStatus.EFFECTIVE.getCode())));
         //更新审核状态为有效
         activityMapper.updateById(activity);
-        ActivityDto activityDto = buildDtoResult(activity);
+        ActivityDto activityDto = buildActivityDto(activity);
         //加载到Redis缓存
         redisTemplate.opsForHash().put(RedisKey.ACTIVITY_HASH_KEY,RedisKey.ACTIVITY_HASH_FIELD+id,activityDto);
         log.info("活动[{}]通过审核,加载到缓存中!",activityDto);
@@ -207,6 +232,7 @@ public class ActivityServiceImpl implements ActivityService
         log.info("活动[{}]已下架,从Redis缓存删除中!",activity);
         return new Result().success(activity);
     }
+
 
 
 }

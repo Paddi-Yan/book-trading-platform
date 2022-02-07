@@ -36,11 +36,19 @@ public class ActivityController
     @ResponseBody
     @GetMapping("/get")
     @ApiOperation("获取所有活动信息")
-    @ApiImplicitParam(name = "refresh",value = "是否需要刷新缓存数据 不传参-默认不需要 1-需要进行缓存刷新",required = false)
     @NoNeedToAuthorized
-    public Result getActivity(Integer refresh)
+    public Result getActivity()
     {
-        return activityService.getActivity(refresh);
+        return activityService.getActivity();
+    }
+
+    @ResponseBody
+    @GetMapping("/get/{id}")
+    @ApiOperation("获取活动详情信息")
+    @NoNeedToAuthorized
+    public Result getActivityById(@PathVariable Long id)
+    {
+        return activityService.getActivityById(id);
     }
 
     @ResponseBody

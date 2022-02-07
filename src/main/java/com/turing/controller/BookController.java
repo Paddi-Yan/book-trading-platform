@@ -94,6 +94,15 @@ public class BookController
         return bookService.getBookInfoByTag(tag);
     }
 
+    @ResponseBody
+    @GetMapping("/getBookDetails/{id}")
+    @ApiOperation("获取书籍详情")
+    @NoNeedToAuthorized
+    public Result getBookDetails(@PathVariable Integer id)
+    {
+        return bookService.getBookInfoByBookId(id);
+    }
+
 
     /*
     @PostMapping(value = "/fileUploadTest",headers = "content-type=multipart/form-data")
