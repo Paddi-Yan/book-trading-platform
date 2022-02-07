@@ -73,6 +73,14 @@ public class User
     public void transform(WechatUserInfo wechatUserInfo)
     {
         BeanUtils.copyProperties(wechatUserInfo,this);
+        switch (wechatUserInfo.getGender()){
+            case "0":
+                this.setGender("女");
+                break;
+            case "1":
+                this.setGender("男");
+                break;
+        }
     }
 
 

@@ -32,16 +32,17 @@ public class SearchController
     @NoNeedToAuthorized
     private Result search(@RequestBody RequestParams params)
     {
-        String type = params.getType();
-        if (StringUtils.isBlank(type))
+        if (params.getType() == null)
         {
-            return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("必须携带参数[type]指定搜索类型");
+            return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("必须携带参数[key]指定搜索类型");
         }
-        if (!ElasticsearchIndex.BOOK.equals(type)
-                && !ElasticsearchIndex.COMMUNITY.equals(type)
-                && !ElasticsearchIndex.USER.equals(type))
+        String key = params.getType();
+        if (StringUtils.isBlank(key)
+                && !ElasticsearchIndex.BOOK.equals(key)
+                && !ElasticsearchIndex.COMMUNITY.equals(key)
+                && !ElasticsearchIndex.USER.equals(key))
         {
-            return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("携带参数[type]错误! <书籍:book 用户:user 社群:community>");
+            return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("携带参数[key]错误! <书籍:book 用户:user 社群:community>");
         }
         return elasticsearchService.search(params);
     }

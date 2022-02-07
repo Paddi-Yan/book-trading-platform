@@ -20,9 +20,10 @@ public class WechatUserInfo implements Serializable
 {
     private static final long serialVersionUID = 8243422323180274689L;
 
-    @ApiModelProperty(hidden = true)
-    private String openid;
 
+    @ApiModelProperty(required = true)
+    private String openid;
+    @ApiModelProperty(required = true)
     private String nickname;
 
     @ApiModelProperty(hidden = true)
@@ -30,12 +31,16 @@ public class WechatUserInfo implements Serializable
     /**
      * 头像
      */
+    @ApiModelProperty(required = true)
     private String avatar;
 
     /**
      * 包括敏感数据在内的完整用户信息的加密数据
      */
     private String encryptedData;
+
+    @ApiModelProperty(required = true)
+    private String sessionKey;
 
     /**
      * 加密算法的初始向量

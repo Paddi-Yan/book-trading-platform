@@ -20,4 +20,6 @@ public interface BookService
     Result getBookInfo(Integer type);
 
     Result getBookInfoByBookId(Integer bookId);
+
+    Result getBookInfoByTag(Integer tag);
 }

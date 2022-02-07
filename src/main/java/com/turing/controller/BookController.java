@@ -85,7 +85,14 @@ public class BookController
         return bookService.getBookInfo(type);
     }
 
-
+    @ResponseBody
+    @GetMapping("/getBookByTag")
+    @ApiOperation("根据分类获取图书列表")
+    @NoNeedToAuthorized
+    public Result getBookByTags(Integer tag)
+    {
+        return bookService.getBookInfoByTag(tag);
+    }
 
 
     /*

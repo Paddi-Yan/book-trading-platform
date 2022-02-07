@@ -13,7 +13,40 @@ public class ElasticsearchIndex
     public static final String BOOK = "book";
     public static final String USER = "user";
     public static final String COMMUNITY = "community";
-
+/*
+    {
+        "settings": {
+        "analysis": {
+            "analyzer": {
+                "my_analyzer": {
+                    "tokenizer": "ik_max_word",
+                            "filter": "py"
+                }
+            },
+            "filter": {
+                "py": {
+                    "type": "pinyin",
+                            "keep_full_pinyin": false,
+                            "keep_joined_full_pinyin": true,
+                            "keep_original": true,
+                            "limit_first_letter_length": 16,
+                            "remove_duplicated_term": true,
+                            "none_chinese_pinyin_tokenize": false
+                }
+            }
+        }
+    },
+        "mappings":{
+        "properties":{
+            "name":{
+                "type":"text",
+                        "analyzer":"my_analyzer",
+                        "search_analyzer":"ik_smart"
+            }
+        }
+    }
+    }
+ */
     public static final String BOOK_INDEX = "{\n" +
             "    \"mappings\":{\n" +
             "        \"properties\": {\n" +

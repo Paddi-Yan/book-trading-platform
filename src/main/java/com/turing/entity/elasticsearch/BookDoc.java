@@ -10,6 +10,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class BookDoc implements Serializable
     private Integer type;
     private Integer userId;
     private Integer status;
-    private Double price;
+    private BigDecimal price;
 
     public void transform(Book book)
     {
