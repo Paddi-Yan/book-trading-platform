@@ -35,7 +35,7 @@ public class ActivityController
 
     @ResponseBody
     @GetMapping("/get")
-    @ApiOperation("获取所有活动信息")
+    @ApiOperation(value = "获取所有活动信息-不需要认证")
     @NoNeedToAuthorized
     public Result getActivity()
     {
@@ -44,7 +44,7 @@ public class ActivityController
 
     @ResponseBody
     @GetMapping("/get/{id}")
-    @ApiOperation("获取活动详情信息")
+    @ApiOperation("获取活动详情信息-不需要认证")
     @NoNeedToAuthorized
     public Result getActivityById(@PathVariable Long id)
     {
@@ -105,7 +105,7 @@ public class ActivityController
 
     @ResponseBody
     @PostMapping("/passExamine/{id}")
-    @ApiOperation("通过活动审核")
+    @ApiOperation("通过活动审核-管理员接口-暂时不需要认证")
     @NoNeedToAuthorized
     public Result passExamine(@PathVariable Long id)
     {
@@ -115,7 +115,7 @@ public class ActivityController
 
     @ResponseBody
     @DeleteMapping("/withdraw/{id}")
-    @ApiOperation("下架活动")
+    @ApiOperation("下架活动-管理员接口-暂时不需要认证")
     @NoNeedToAuthorized
     public Result withdraw(@PathVariable Long id)
     {

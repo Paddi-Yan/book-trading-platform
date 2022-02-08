@@ -100,7 +100,6 @@ public class CommunityServiceImpl extends ServiceImpl<CommunityInforMapper, Comm
         }
 
         return new Result().success(dtoList);
-
     }
 
     @Override
@@ -142,6 +141,7 @@ public class CommunityServiceImpl extends ServiceImpl<CommunityInforMapper, Comm
             Integer comId = Integer.valueOf(((String)key).substring(4));
             map.put(comId,hotCount);
         }
+
         List<Integer> collect = map.entrySet().stream()
                 .sorted((o1, o2) -> o2.getValue() - o1.getValue()).limit(20)
                 .map(Map.Entry::getKey)
@@ -153,6 +153,5 @@ public class CommunityServiceImpl extends ServiceImpl<CommunityInforMapper, Comm
         List<CommunityInfor> list = communityInforMapper.selectList(queryWrapper);
         return new Result().success(list);
     }
-
 
 }

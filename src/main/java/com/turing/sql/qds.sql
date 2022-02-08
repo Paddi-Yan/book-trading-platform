@@ -15,7 +15,7 @@ MySQL - 5.7.32 : Database - sys
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 CREATE DATABASE /*!32312 IF NOT EXISTS*/`sys` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
-USE `sys`;
+USE `wx_mini_server`;
 
 /*Table structure for table `comment` */
 

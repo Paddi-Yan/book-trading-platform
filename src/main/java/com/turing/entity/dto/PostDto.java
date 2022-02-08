@@ -47,6 +47,7 @@ public class PostDto implements Serializable {
     @ApiModelProperty("帖子内容")
     private String content;
 
+
     @ApiModelProperty(hidden = true)
     private Integer type;
 

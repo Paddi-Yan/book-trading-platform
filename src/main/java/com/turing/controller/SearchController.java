@@ -27,7 +27,7 @@ public class SearchController
     private ElasticsearchService elasticsearchService;
 
     @PostMapping("/search")
-    @ApiOperation("搜索获取信息")
+    @ApiOperation("搜索获取信息-不需要认证")
     @ResponseBody
     @NoNeedToAuthorized
     private Result search(@RequestBody RequestParams params)

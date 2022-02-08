@@ -1,6 +1,7 @@
 package com.turing.config;
 
 import com.turing.common.HttpStatusCode;
+import com.turing.utils.JWTUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,10 +11,9 @@ import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.builders.ResponseMessageBuilder;
 import springfox.documentation.schema.ModelRef;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.ApiKey;
-import springfox.documentation.service.ResponseMessage;
+import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -54,7 +54,8 @@ public class SwaggerConfig
                 .apis(RequestHandlerSelectors.basePackage("com.turing.controller"))
                 .paths(PathSelectors.any())
                 .build()
-                .securitySchemes(security());
+                .securitySchemes(security())
+                .securityContexts(securityContexts());
     }
 
     public ApiInfo apiInfo()
@@ -67,8 +68,29 @@ public class SwaggerConfig
     }
 
     private List<ApiKey> security() {
-        return new ArrayList<ApiKey>(
-                Collections.singleton(new ApiKey("Token", "Bear Token", "header"))
-        );
+        List<ApiKey> apiKeyList = new ArrayList<>();
+        String authHeaderKey = JWTUtils.AUTH_HEADER_KEY;
+        apiKeyList.add(new ApiKey(authHeaderKey, authHeaderKey, "header"));
+        return apiKeyList;
+    }
+
+    private List<SecurityContext> securityContexts() {
+        List<SecurityContext> securityContexts=new ArrayList<>();
+        securityContexts.add(
+                SecurityContext.builder()
+                        .securityReferences(defaultAuth())
+                        .forPaths(PathSelectors.regex("^(?!auth).*$"))
+                        .build());
+        return securityContexts;
+    }
+
+    private List<SecurityReference> defaultAuth()
+    {
+        AuthorizationScope authorizationScope = new AuthorizationScope("Global Token Authorization", "Bearer {token} can access everything.");
+        AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
+        authorizationScopes[0] = authorizationScope;
+        List<SecurityReference> securityReferences = new ArrayList<>();
+        securityReferences.add(new SecurityReference(JWTUtils.AUTH_HEADER_KEY, authorizationScopes));
+        return securityReferences;
     }
 }

@@ -51,7 +51,7 @@ public class PostController {
     HotService hotService;
 
     @ResponseBody
-    @ApiOperation("获取社群所有帖子")
+    @ApiOperation("获取社群所有帖子-不需要认证")
     @PostMapping("/getPostByCommunityId")
     @NoNeedToAuthorized
     public Result getPostByCommunityId(Integer communityId) {
@@ -59,7 +59,7 @@ public class PostController {
     }
 
     @ResponseBody
-    @ApiOperation("获取帖子所有评论")
+    @ApiOperation("获取帖子所有评论-不需要认证")
     @PostMapping("/getCommentByPostId")
     @NoNeedToAuthorized
     public Result getCommentByPostId(Integer postId) {
@@ -71,7 +71,6 @@ public class PostController {
     @ResponseBody
     @ApiOperation("发评论")
     @PostMapping("/sendComment")
-    @NoNeedToAuthorized
     public Result sendComment(Comment comment) {
         Post post = postService.getById(comment.getPostId());
         hotService.hotAdd(Math.toIntExact(post.getCommunityId()),5);
@@ -81,7 +80,6 @@ public class PostController {
     @ResponseBody
     @ApiOperation("发帖子")
     @PostMapping("/sendPost")
-    @NoNeedToAuthorized
     public Result sendPost(PostDto postDto, MultipartFile[] photos) {
         if (photos != null)
         {

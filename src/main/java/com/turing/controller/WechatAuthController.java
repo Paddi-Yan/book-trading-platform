@@ -43,7 +43,7 @@ public class WechatAuthController
     private RedisTemplate redisTemplate;
 
     @PostMapping("/login")
-    @ApiOperation("微信一键登录")
+    @ApiOperation("微信一键登录-不需要认证")
     @ResponseBody
     @NoNeedToAuthorized
     public Result login(@RequestParam String code,
@@ -85,7 +85,7 @@ public class WechatAuthController
     }
 
     @GetMapping("/getWechatUserInfo")
-    @ApiOperation("获取微信用户信息")
+    @ApiOperation("绑定微信用户信息")
     @ResponseBody
     public Result getUserInfo(@RequestBody WechatUserInfo wechatUserInfo)
     {

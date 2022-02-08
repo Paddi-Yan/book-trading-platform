@@ -78,7 +78,7 @@ public class BookController
     @ResponseBody
     @GetMapping("/getBookInfo")
     @ApiImplicitParam(name = "type",value = "类型:0-出书/1-求书",required = true)
-    @ApiOperation("获取公共图书列表")
+    @ApiOperation("获取公共图书列表-不需要认证")
     @NoNeedToAuthorized
     public Result getAllBookInfo(Integer type)
     {
@@ -87,7 +87,7 @@ public class BookController
 
     @ResponseBody
     @GetMapping("/getBookByTag")
-    @ApiOperation("根据分类获取图书列表")
+    @ApiOperation("根据分类获取图书列表-不需要认证")
     @NoNeedToAuthorized
     public Result getBookByTags(Integer tag)
     {
@@ -96,7 +96,7 @@ public class BookController
 
     @ResponseBody
     @GetMapping("/getBookDetails/{id}")
-    @ApiOperation("获取书籍详情")
+    @ApiOperation("获取书籍详情-不需要认证")
     @NoNeedToAuthorized
     public Result getBookDetails(@PathVariable Integer id)
     {

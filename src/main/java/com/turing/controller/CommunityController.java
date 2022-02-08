@@ -36,7 +36,7 @@ public class CommunityController {
 
 
     @ResponseBody
-    @ApiOperation("获取用户关注的社群")
+    @ApiOperation("获取用户关注的社群-不需要认证")
     @PostMapping("/getCommunityByUser")
     @NoNeedToAuthorized
     public Result getCommunityByUser(Integer userId) {
@@ -44,7 +44,7 @@ public class CommunityController {
     }
 
     @ResponseBody
-    @ApiOperation("获取社群信息")
+    @ApiOperation("获取社群信息-不需要认证")
     @PostMapping("/getCommunityInformation")
     @NoNeedToAuthorized
     public Result getCommunityInformation(Integer communityId) {
@@ -55,7 +55,6 @@ public class CommunityController {
     @ResponseBody
     @ApiOperation("创建社区")
     @PostMapping("/createCommunityInformation")
-    @NoNeedToAuthorized
     public Result createCommunityInformation(CommunityInfor communityInfor, MultipartFile photo) {
 
         //上传图片 返回图片地址
@@ -78,7 +77,7 @@ public class CommunityController {
 
 
     @ResponseBody
-    @ApiOperation("获取某一分类的社区,以图片中：言情为1，武侠为2，后面依次。热门和推荐单独接口")
+    @ApiOperation("获取某一分类的社区,以图片中：言情为1，武侠为2，后面依次。热门和推荐单独接口-不需要认证")
     @PostMapping("/getCommunity")
     @NoNeedToAuthorized
     public Result getCommunity(Integer type) {
@@ -86,7 +85,7 @@ public class CommunityController {
     }
 
     @ResponseBody
-    @ApiOperation("获取热门社区")
+    @ApiOperation("获取热门社区-不需要认证")
     @PostMapping("/getCommunityHot")
     @NoNeedToAuthorized
     public Result getCommunityHot() {
@@ -95,7 +94,7 @@ public class CommunityController {
     }
 
     @ResponseBody
-    @ApiOperation("获取推荐社区")
+    @ApiOperation("获取推荐社区-不需要认证")
     @PostMapping("/getCommunityRecommend")
     @NoNeedToAuthorized
     public Result getCommunityRecommend() {

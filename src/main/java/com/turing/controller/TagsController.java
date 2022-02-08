@@ -40,7 +40,7 @@ public class TagsController
 
     @ResponseBody
     @GetMapping("/getPublicTags")
-    @ApiOperation("获取书籍标签分类")
+    @ApiOperation("获取书籍标签分类-不需要认证")
     @NoNeedToAuthorized
     public Result getPublicTags()
     {

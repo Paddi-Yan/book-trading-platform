@@ -4,8 +4,15 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
+
+import com.turing.entity.dto.PostDto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.BeanUtils;
 
 /**
  * <p>
@@ -41,6 +48,10 @@ public class Post implements Serializable {
 
     @ApiModelProperty("帖子内容")
     private String content;
+
+    @ApiModelProperty(hidden = true)
+    private String photo;
+
 
     @ApiModelProperty("0-普通，1-置顶")
     private Integer type;
@@ -124,5 +135,19 @@ public class Post implements Serializable {
         ", type=" + type +
         ", createTime=" + createTime +
         "}";
+    }
+
+    public void transform(PostDto postDto) {
+        BeanUtils.copyProperties(postDto, this);
+        StringBuilder photoString = new StringBuilder();
+        List<String> photoList = postDto.getPhotoList();
+        for (int i = 0; photoList != null && i < photoList.size(); i++) {
+            if (i < photoList.size() - 1) {
+                photoString.append(photoList.get(i) + ",");
+            } else {
+                photoString.append(photoList.get(i));
+            }
+        }
+        this.setPhoto(photoString.toString());
     }
 }
