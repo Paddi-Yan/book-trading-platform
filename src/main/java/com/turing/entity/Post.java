@@ -15,6 +15,9 @@ import io.swagger.annotations.ApiModelProperty;
  * @author qds
  * @since 2022-01-26
  */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @ApiModel(value = "Post", description = "帖子信息")
 public class Post implements Serializable {
 

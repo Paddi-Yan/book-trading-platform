@@ -12,7 +12,10 @@ import io.swagger.annotations.ApiModelProperty;
  * @author qds
  * @since 2022-01-26
  */
-@ApiModel(value = "Community", description = "社区信息")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ApiModel(value = "Community对象", description = "社区信息")
 public class Community implements Serializable {
 
     private static final long serialVersionUID = 1L;

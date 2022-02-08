@@ -3,6 +3,7 @@ package com.turing.service;
 import com.turing.common.Result;
 import com.turing.entity.Post;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.turing.entity.dto.PostDto;
 
 /**
  * <p>
@@ -14,6 +15,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IPostService extends IService<Post> {
     Result getPostByCommunityId(Integer communityId);
+    Result sendPost(PostDto postDto);
 
 
 }
