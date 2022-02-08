@@ -64,7 +64,8 @@ public class PostController {
     @NoNeedToAuthorized
     public Result getCommentByPostId(Integer postId) {
         Post post = postService.getById(postId);
-        hotService.hotAdd(Math.toIntExact(post.getCommunityId()),1);
+        if (post == null) return new Result().success(null);
+        hotService.hotAdd(Math.toIntExact(post.getCommunityId()), 1);
         return commentService.getCommentByPostId(postId);
     }
 
@@ -74,7 +75,8 @@ public class PostController {
     @NoNeedToAuthorized
     public Result sendComment(Comment comment) {
         Post post = postService.getById(comment.getPostId());
-        hotService.hotAdd(Math.toIntExact(post.getCommunityId()),5);
+        if (comment.getContent() == null || comment.getContent().isEmpty() ||comment.getPostId() ==null||comment.getUserId() ==null || post == null) return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR);
+        hotService.hotAdd(Math.toIntExact(post.getCommunityId()), 5);
         return commentService.sentComment(comment);
     }
 
@@ -83,8 +85,10 @@ public class PostController {
     @PostMapping("/sendPost")
     @NoNeedToAuthorized
     public Result sendPost(PostDto postDto, MultipartFile[] photos) {
-        if (photos != null)
-        {
+        if (postDto.getCommunityId() == null || postDto.getUserId() == null||postDto.getTitle() == null) {
+            return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR);
+        }
+        if (photos != null) {
             List<String> List = new ArrayList<>();
             for (MultipartFile file : photos) {
                 //上传图片 返回图片地址
@@ -98,8 +102,8 @@ public class PostController {
                 List.add(upload);
             }
             postDto.setPhotoList(List);
-            hotService.hotAdd(Math.toIntExact(postDto.getCommunityId()),5);
         }
+        hotService.hotAdd(Math.toIntExact(postDto.getCommunityId()), 5);
         return postService.sendPost(postDto);
     }
 
@@ -108,6 +112,7 @@ public class PostController {
     @PostMapping("/like")
     @NoNeedToAuthorized
     public Result like(Integer postId, Integer userId) {
+        if (postId == null || userId == null) return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR);
         likeService.like(postId, userId);
         long count = likeService.likeCount(postId);
         int status = likeService.userLikeStatus(userId, postId);

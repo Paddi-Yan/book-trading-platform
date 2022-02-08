@@ -2,14 +2,17 @@ package com.turing.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.turing.common.HttpStatusCode;
 import com.turing.common.RedisKey;
 import com.turing.common.Result;
 import com.turing.entity.Community;
 import com.turing.entity.CommunityInfor;
 import com.turing.entity.Post;
+import com.turing.entity.User;
 import com.turing.entity.dto.CommunityInforDto;
 import com.turing.mapper.CommunityInforMapper;
 import com.turing.mapper.CommunityMapper;
+import com.turing.mapper.UserMapper;
 import com.turing.service.HotService;
 import com.turing.service.ICommunityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,16 +44,30 @@ public class CommunityServiceImpl extends ServiceImpl<CommunityInforMapper, Comm
     HotService hotService;
     @Autowired
     RedisTemplate redisTemplate;
+    @Autowired
+    UserMapper userMapper;
 
     @Override
     public Result getCommunity(Integer userId) {
         List<CommunityInfor> communityByUserId = communityInforMapper.getCommunityByUserId(userId);
+        try {
+            User user = userMapper.selectById(userId);
+            if (user==null){
+                return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("用户不存在");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return new Result().fail(HttpStatusCode.ERROR).data(communityByUserId);
+        }
         return new Result().success(communityByUserId);
     }
 
     @Override
     public Result getCommunityInformation(Integer communityId) {
         CommunityInfor communityInfor = communityInforMapper.selectById(communityId);
+        if (communityInfor == null){
+            return new Result().success(null);
+        }
         CommunityInforDto communityInforDto = new CommunityInforDto();
         Integer attention = 0;
         Integer topic = 0;
@@ -73,7 +90,11 @@ public class CommunityServiceImpl extends ServiceImpl<CommunityInforMapper, Comm
 
     @Override
     public Result createCommunity(CommunityInfor communityInfor) {
-        communityInforMapper.insert(communityInfor);
+        try {
+            communityInforMapper.insert(communityInfor);
+        }catch (Exception e){
+            return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("用户不存在，或社区名称不能为空");
+        }
         return new Result().success(null);
     }
 

@@ -48,7 +48,11 @@ public class CommunityController {
     @PostMapping("/getCommunityInformation")
     @NoNeedToAuthorized
     public Result getCommunityInformation(Integer communityId) {
-        hotService.hotAdd(communityId,1);
+        try {
+            hotService.hotAdd(communityId,1);
+        }catch (Exception e) {
+            return communityService.getCommunityInformation(communityId).message("redis服务器未启动");
+        }
         return communityService.getCommunityInformation(communityId);
     }
 
@@ -58,7 +62,11 @@ public class CommunityController {
     @NoNeedToAuthorized
     public Result createCommunityInformation(CommunityInfor communityInfor, MultipartFile photo) {
 
-        //上传图片 返回图片地址
+        if (communityInfor.getKind()>14 || communityInfor.getKind()<1){
+            return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("社区类别输入异常");
+        }
+
+//        上传图片 返回图片地址
         String upload = null;
         if (photo != null) {
             try {
@@ -82,6 +90,9 @@ public class CommunityController {
     @PostMapping("/getCommunity")
     @NoNeedToAuthorized
     public Result getCommunity(Integer type) {
+        if (type== null || type>14 || type<1){
+            return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("社区类别输入异常");
+        }
         return communityService.getCommunityByType(type);
     }
 
