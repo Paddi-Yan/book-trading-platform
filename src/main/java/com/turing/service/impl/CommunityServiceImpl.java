@@ -52,10 +52,10 @@ public class CommunityServiceImpl extends ServiceImpl<CommunityInforMapper, Comm
         List<CommunityInfor> communityByUserId = communityInforMapper.getCommunityByUserId(userId);
         try {
             User user = userMapper.selectById(userId);
-            if (user==null){
+            if (user == null) {
                 return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("用户不存在");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return new Result().fail(HttpStatusCode.ERROR).data(communityByUserId);
         }
@@ -65,7 +65,7 @@ public class CommunityServiceImpl extends ServiceImpl<CommunityInforMapper, Comm
     @Override
     public Result getCommunityInformation(Integer communityId) {
         CommunityInfor communityInfor = communityInforMapper.selectById(communityId);
-        if (communityInfor == null){
+        if (communityInfor == null) {
             return new Result().success(null);
         }
         CommunityInforDto communityInforDto = new CommunityInforDto();
@@ -84,7 +84,7 @@ public class CommunityServiceImpl extends ServiceImpl<CommunityInforMapper, Comm
 
         heat = hotService.getHot(communityId);
 
-        communityInforDto.transform(communityInfor,attention,topic,heat,sentCount);
+        communityInforDto.transform(communityInfor, attention, topic, heat, sentCount);
         return new Result().success(communityInforDto);
     }
 
@@ -92,7 +92,7 @@ public class CommunityServiceImpl extends ServiceImpl<CommunityInforMapper, Comm
     public Result createCommunity(CommunityInfor communityInfor) {
         try {
             communityInforMapper.insert(communityInfor);
-        }catch (Exception e){
+        } catch (Exception e) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("用户不存在，或社区名称不能为空");
         }
         return new Result().success(null);
@@ -143,35 +143,27 @@ public class CommunityServiceImpl extends ServiceImpl<CommunityInforMapper, Comm
         }
 
         Stream<CommunityInforDto> stream = dtoList.stream();
-        List<CommunityInforDto> collect = stream.sorted((a, b) -> b.getAttention() - a.getAttention())
-                .limit(20).collect(Collectors.toList());
+        List<CommunityInforDto> collect = stream.limit(20)
+                .sorted((a, b) -> b.getAttention() - a.getAttention())
+                .collect(Collectors.toList());
         return new Result().success(collect);
     }
 
     @Override
     public Result getCommunityHot() {
-        Set keys = redisTemplate.keys(RedisKey.Hot);
-        System.out.println(keys.toString());
-        Map<Integer,Integer> map = new TreeMap<>(new Comparator<Integer>() {
-            @Override
-            public int compare(Integer o1, Integer o2) {
-                return o2-o1;
-            }
-        });
+        Set keys = redisTemplate.keys(RedisKey.Hot + "*");
+        Map<Integer, Integer> map = new TreeMap<>((o1, o2) -> o2 - o1);
         for (Object key : keys) {
-            Integer hotCount = (Integer)redisTemplate.opsForValue().get(key);
-            Integer comId = Integer.valueOf(((String)key).substring(4));
-            map.put(comId,hotCount);
+            Integer hotCount = (Integer) redisTemplate.opsForValue().get(key);
+            Integer comId = Integer.valueOf(((String) key).substring(4));
+            map.put(hotCount, comId);
         }
         List<Integer> collect = map.entrySet().stream()
-                .sorted((o1, o2) -> o2.getValue() - o1.getValue()).limit(20)
-                .map(Map.Entry::getKey)
+                .limit(15)
+                .map(Map.Entry::getValue)
                 .collect(Collectors.toList());
 
-        System.out.println(collect);
-        QueryWrapper<CommunityInfor> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("com_id", collect);
-        List<CommunityInfor> list = communityInforMapper.selectList(queryWrapper);
+        List<CommunityInfor> list = communityInforMapper.selectBatchIds(collect);
         return new Result().success(list);
     }
 

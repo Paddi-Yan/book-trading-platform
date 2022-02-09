@@ -101,8 +101,7 @@ public class CommunityController {
     @PostMapping("/getCommunityHot")
     @NoNeedToAuthorized
     public Result getCommunityHot() {
-//        return communityService.getCommunityHot();
-        return communityService.getCommunityRecommend();
+        return communityService.getCommunityHot();
     }
 
     @ResponseBody
