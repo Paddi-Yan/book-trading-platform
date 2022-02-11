@@ -49,7 +49,6 @@ public class WechatAuthController
     public Result login(@RequestParam String code,
                         @RequestParam String nickname ,
                         @RequestParam String avatar ,
-                        @RequestParam String gender,
                         HttpServletRequest request)
     {
         if (code == null)
@@ -74,7 +73,6 @@ public class WechatAuthController
         wechatUserInfo.setAvatar(avatar);
         wechatUserInfo.setNickname(nickname);
         wechatUserInfo.setOpenid(openid);
-        wechatUserInfo.setGender(gender);
         Result loginResult = wechatService.wechatLogin(openid, sessionKey, wechatUserInfo);
         redisTemplate.opsForValue().set(RedisKey.SESSION_KEY+sessionKey,openid,7, TimeUnit.DAYS);
         Map<String,Object> resultMap = new HashMap<>();

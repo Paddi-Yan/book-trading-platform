@@ -50,7 +50,7 @@ public class ElasticsearchIndex
     public static final String BOOK_INDEX = "{\n" +
             "    \"mappings\":{\n" +
             "        \"properties\": {\n" +
-            "            \"description\": {\n" +
+            "            \"summary\": {\n" +
             "                \"type\": \"text\"\n" +
             "            },\n" +
             "            \"id\": {\n" +
@@ -61,15 +61,15 @@ public class ElasticsearchIndex
             "                \"type\": \"text\",\n" +
             "                \"analyzer\": \"ik_max_word\"\n" +
             "            },\n" +
-            "            \"name\": {\n" +
+            "            \"title\": {\n" +
             "                \"type\": \"text\",\n" +
             "                \"copy_to\": [\n" +
             "                    \"key\"\n" +
             "                ],\n" +
             "                \"analyzer\": \"ik_max_word\"\n" +
             "            },\n" +
-            "            \"photo\": {\n" +
-            "                \"type\": \"keyword\",\n" +
+            "            \"cover\": {\n" +
+            "                \"type\": \"text\",\n" +
             "                \"index\": false\n" +
             "            },\n" +
             "            \"price\": {\n" +
@@ -80,10 +80,6 @@ public class ElasticsearchIndex
             "            },\n" +
             "            \"tagId\": {\n" +
             "                \"type\": \"text\",\n" +
-            "                \"index\": false\n" +
-            "            },\n" +
-            "            \"type\": {\n" +
-            "                \"type\": \"integer\",\n" +
             "                \"index\": false\n" +
             "            },\n" +
             "            \"userId\": {\n" +

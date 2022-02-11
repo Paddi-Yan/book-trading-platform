@@ -8,6 +8,7 @@ public enum HttpStatusCode
 {
     SUCCESS(200,"请求已经成功处理"),
     ERROR(500,"服务器内部发生错误"),
+    NOT_FOUND(404,"请求路径不存在"),
     REQUEST_PARAM_ERROR(400,"请求携带参数错误"),
     FORBIDDEN(403,"权限不足,服务器拒绝处理该请求"),
 

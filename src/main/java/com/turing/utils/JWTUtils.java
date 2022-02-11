@@ -34,6 +34,12 @@ public class JWTUtils
 
     private static final Logger logger = LoggerFactory.getLogger(Logger.class);
 
+    public static void main(String[] args)
+    {
+        String token = JWTUtils.sign(1L);
+        System.out.println(token);
+    }
+
     /**
      * 校验token
      * @param token

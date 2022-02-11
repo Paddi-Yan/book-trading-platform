@@ -14,6 +14,7 @@ import com.turing.service.LikeService;
 import com.turing.utils.FTPUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -78,7 +79,7 @@ public class PostController {
     }
 
     @ResponseBody
-    @ApiOperation("发帖子")
+    @ApiOperation(value = "发帖子")
     @PostMapping("/sendPost")
     public Result sendPost(PostDto postDto, MultipartFile[] photos) {
         if (photos != null)

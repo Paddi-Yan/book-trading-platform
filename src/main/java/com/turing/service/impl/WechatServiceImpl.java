@@ -75,7 +75,9 @@ public class WechatServiceImpl implements WechatService
     {
         log.info("appid:{}",appid);
         log.info("secret:{}",secret);
+        log.info("code:{}",code);
         //调用微信登录凭证校验接口
+        String urr = "https://api.weixin.qq.com/sns/jscode2session?appid=APPID&secret=SECRET&js_code=JSCODE&grant_type=authorization_code";
         String url = "https://api.weixin.qq.com/sns/jscode2session?appid=APPID&secret=SECRET&js_code=JSCODE&grant_type=authorization_code";
         String replaceUrl = url.replace("APPID",appid).replace("SECRET", secret).replace("JSCODE", code).replace("'","");
         log.info("URL:{}",replaceUrl);

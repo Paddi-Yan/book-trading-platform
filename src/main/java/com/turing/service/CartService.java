@@ -12,7 +12,7 @@ import java.util.List;
 public interface CartService
 {
 
-    Result addCart(User user, Integer bookId);
+    Result addCart(User user, Integer bookId, Integer count);
 
     Result getCart(Long userId, Integer refresh);
 

@@ -1,17 +1,14 @@
 package com.turing.entity.dto;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.turing.entity.Book;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -34,9 +31,78 @@ public class BookDto implements Serializable
 
     @ApiModelProperty(hidden = true)
     private Integer id;
-
+    /**
+     * ISBN编码
+     */
     @ApiModelProperty(required = true)
-    private String name;
+    private String ISBN;
+    /**
+     * 书名
+     */
+    @ApiModelProperty(hidden = true)
+    private String title;
+    /**
+     * 书籍封面
+     */
+    @ApiModelProperty(hidden = true)
+    private String cover;
+    /**
+     * 摘要
+     */
+    @ApiModelProperty(hidden = true)
+    private String summary;
+    /**
+     * 出版社
+     */
+    @ApiModelProperty(hidden = true)
+    private String publisher;
+    /**
+     * 出版时间
+     */
+    @ApiModelProperty(hidden = true)
+    private String pubdate;
+    /**
+     * 作者
+     */
+    @ApiModelProperty(hidden = true)
+    private String author;
+    /**
+     * 库存数量
+     */
+    @ApiModelProperty(required = true)
+    private Integer stock;
+
+    /**
+     * 售价
+     */
+    private BigDecimal sellingPrice;
+
+    /**
+     * 邮费
+     */
+    @ApiModelProperty(required = false)
+    private BigDecimal freight;
+
+    /**
+     * 发货地址
+     */
+    @ApiModelProperty(required = true)
+    private Integer addressId;
+    /**
+     * 评价数
+     */
+    @ApiModelProperty(hidden = true)
+    private Integer commentCount;
+    /**
+     * 好评率
+     */
+    @ApiModelProperty(hidden = true)
+    private String activeRate;
+    /**
+     * 装帧
+     */
+    @ApiModelProperty(hidden = true)
+    private String binding;
     /**
      * 书籍图片
      */
@@ -47,22 +113,8 @@ public class BookDto implements Serializable
      */
     @ApiModelProperty(required = true)
     private List<String > tagIdList;
-    /**
-     * 简介描述
-     */
-    @ApiModelProperty(required = true)
-    private String description;
-
-    @ApiModelProperty(required = true)
-    private BigDecimal price;
-
-    /**
-     * 图书类型
-     * 0表示出书
-     * 1表示求书
-     */
-    @ApiModelProperty(name = "type",required = true)
-    private Integer type;
+    @ApiModelProperty(hidden = true)
+    private List<String> commentTagList;
 
     @ApiModelProperty(required = true)
     private Integer userId;
@@ -74,11 +126,24 @@ public class BookDto implements Serializable
     public void transform(Book book)
     {
         BeanUtils.copyProperties(book,this);
+        this.activeRate = book.getActiveRate() + "%";
         List<String > tags = new ArrayList<>();
         List<String> photos = new ArrayList<>();
-        photos = Arrays.asList(book.getPhoto().split(","));
-        tags = Arrays.asList(book.getTagId().split(","));
-        this.setPhotoList(photos);
-        this.setTagIdList(tags);
+        List<String> commentTagList = new ArrayList<>();
+        if (StringUtils.isNotBlank(book.getPhoto()))
+        {
+            photos = Arrays.asList(book.getPhoto().split(","));
+            this.setPhotoList(photos);
+        }
+        if (StringUtils.isNotBlank(book.getTagId()))
+        {
+            tags = Arrays.asList(book.getTagId().split(","));
+            this.setTagIdList(tags);
+        }
+        if (StringUtils.isNotBlank(book.getCommentTag()))
+        {
+            commentTagList = Arrays.asList(book.getCommentTag().split(","));
+            this.setCommentTagList(commentTagList);
+        }
     }
 }

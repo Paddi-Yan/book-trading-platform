@@ -17,5 +17,9 @@ public class RedisKey
     public static final String  LIKE_USER = "like_user_";
     public static final String SESSION_KEY = "session_key_";
     public static final String Hot = "hot_";
-
+    public static final String ISBN_KEY = "ISBN_";
+    public static final String BOOK_KEY = "book_";
+    public static final String BOOK_COMMENT_FILED = "book_comment_";
+    public static final String ORDER_KEY = "order_user_";
+    public static final String ORDER_FIELD = "order_";
 }

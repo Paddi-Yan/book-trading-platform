@@ -27,11 +27,10 @@ public class BookDoc implements Serializable
     private static final long serialVersionUID = -3710952780775682734L;
     @Field(value = "id")
     private Integer id;
-    private String name;
-    private String photo;
+    private String title;
+    private String cover;
     private List<String> tagId;
-    private String description;
-    private Integer type;
+    private String summary;
     private Integer userId;
     private Integer status;
     private BigDecimal price;
@@ -39,6 +38,7 @@ public class BookDoc implements Serializable
     public void transform(Book book)
     {
         BeanUtils.copyProperties(book,this);
+        this.setPrice(book.getSellingPrice());
         this.tagId = Arrays.asList(book.getTagId().split(","));
         this.status = 1;
     }

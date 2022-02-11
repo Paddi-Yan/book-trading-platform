@@ -113,7 +113,7 @@ public class UserServiceImpl implements UserService
     public Result registry(UserDto userDto)
     {
         User user = new User();
-        BeanUtils.copyProperties(userDto,user);
+        BeanListUtils.copyProperties(userDto,user);
         try {
             this.userMapper.insert(user);
             System.out.println("user"+user.getId());

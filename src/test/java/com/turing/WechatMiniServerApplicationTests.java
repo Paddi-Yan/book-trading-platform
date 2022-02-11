@@ -1,17 +1,17 @@
 package com.turing;
 
 import com.alibaba.fastjson.JSON;
-import com.turing.common.ElasticsearchIndex;
-import com.turing.common.HttpStatusCode;
-import com.turing.common.RedisKey;
-import com.turing.common.Result;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.turing.common.*;
 import com.turing.entity.Book;
+import com.turing.entity.BookComment;
 import com.turing.entity.User;
 import com.turing.entity.dto.ActivityDto;
 import com.turing.entity.dto.BookDto;
 import com.turing.entity.dto.UserDto;
 import com.turing.entity.elasticsearch.BookDoc;
 import com.turing.entity.elasticsearch.RequestParams;
+import com.turing.mapper.BookCommentMapper;
 import com.turing.mapper.BookMapper;
 import com.turing.service.*;
 import com.turing.service.impl.BookServiceImpl;
@@ -26,6 +26,7 @@ import org.elasticsearch.client.indices.GetIndexResponse;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -93,8 +94,6 @@ class WechatMiniServerApplicationTests
     public void BookTest() throws ParseException
     {
         BookDto bookDto = new BookDto();
-        bookDto.setDescription("描述");
-        bookDto.setName("RocketMQ技术内幕");
         ArrayList<String> tagList = new ArrayList<>();
         tagList.add("1");
         tagList.add("2");
@@ -104,7 +103,7 @@ class WechatMiniServerApplicationTests
         photoList.add("path4");
         bookDto.setPhotoList(photoList);
         bookDto.setUserId(1);
-        bookDto.setType(1);
+
 
         bookService.uploadBookInfo(bookDto);
     }
@@ -119,7 +118,7 @@ class WechatMiniServerApplicationTests
     @Test
     void getBookList()
     {
-        Result bookInfo = bookService.getBookInfo(1);
+        Result bookInfo = bookService.getBookInfo();
         System.out.println(bookInfo);
     }
 
@@ -258,6 +257,24 @@ class WechatMiniServerApplicationTests
     }
 
     @Autowired
+    private BookCommentMapper commentMapper;
+    @Test
+    public void commentTest()
+    {
+        List<BookComment> bookComments = commentMapper.selectList(new QueryWrapper<BookComment>()
+                .eq("book_id", 39)
+                .eq("type", CommentStatus.POSITIVE.getCode()));
+        System.out.println(bookComments);
+        for (BookComment bookComment : bookComments) {
+            System.out.println(bookComment.toString());
+        }
+        Integer result = commentMapper.selectCount(new QueryWrapper<BookComment>()
+                .eq("book_id",39)
+                .eq("type", CommentStatus.POSITIVE.getCode()));
+        System.out.println("result = " + result);
+    }
+
+    @Autowired
     private RedisTemplate redisTemplate;
     @Test
     public void redisTest()
@@ -280,6 +297,14 @@ class WechatMiniServerApplicationTests
         UserDto userDto = (UserDto) redisTemplate.opsForValue()
                 .get("token_eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNjQ0MDU0MTkxfQ.UbmPkixMS_fUXdkzRm6hZ03qNdOfp9GkdqgBAHBNViw");
         System.out.println(userDto);
+    }
+    @Value("${isbn.appcode}")
+    private String appcode;
+
+    @Test
+    public void ISBNTest()
+    {
+        System.out.println(appcode);
     }
 
 }

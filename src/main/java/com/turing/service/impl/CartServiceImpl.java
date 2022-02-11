@@ -17,6 +17,7 @@ import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -39,21 +40,17 @@ public class CartServiceImpl implements CartService
     private RedisTemplate redisTemplate;
 
     @Override
-    public Result addCart(User user, Integer bookId)
+    public Result addCart(User user, Integer bookId, Integer count)
     {
-        Book book = bookMapper.selectOne(new QueryWrapper<Book>().eq("id", bookId).eq("status", "1").eq("type","0"));
+        Book book = bookMapper.selectOne(new QueryWrapper<Book>().eq("id", bookId).eq("status", "1").gt("stock",0));
         if (book == null)
         {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("该书籍不存在或者已失效,加入购物车失败!");
         }
-        // 校验是否已存入购物车 保证幂等性
-        Cart one = cartMapper.selectOne(new QueryWrapper<Cart>().eq("user_id", user.getId()).eq("book_id", bookId));
-        if (one != null)
-        {
-            return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("已加入购物车,请勿重复添加!");
-        }
         Cart cart = new Cart();
         cart.transform(user,book);
+        cart.setCount(count);
+        cart.setTotal(book.getSellingPrice().multiply(BigDecimal.valueOf(count)));
         int insert = cartMapper.insert(cart);
         if (insert == 1)
         {

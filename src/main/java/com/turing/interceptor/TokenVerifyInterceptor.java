@@ -31,13 +31,6 @@ public class TokenVerifyInterceptor implements HandlerInterceptor
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception
     {
-//        if ("/error".equals(request.getRequestURI()))
-//        {
-//            log.error("系统发生错误,已被拦截器拦截!");
-//            response.setContentType("application/json;charset=utf-8");
-//            response.getWriter().write(JSON.toJSONString(new Result().fail(HttpStatusCode.ERROR)));
-//            return true;
-//        }
         //判断请求url是否是请求controller方法
         if (!(handler instanceof HandlerMethod))
         {

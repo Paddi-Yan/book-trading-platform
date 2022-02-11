@@ -17,9 +17,11 @@ public interface BookService
      */
     Result uploadBookInfo(BookDto bookDto);
 
-    Result getBookInfo(Integer type);
+    Result getBookInfo();
 
     Result getBookInfoByBookId(Integer bookId);
 
     Result getBookInfoByTag(Integer tag);
+
+    Result getBookInfoByISBN(String ISBN);
 }

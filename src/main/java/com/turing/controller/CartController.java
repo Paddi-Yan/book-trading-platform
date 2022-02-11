@@ -36,16 +36,20 @@ public class CartController
     private BookService bookService;
 
     @ResponseBody
-    @PostMapping("/add/{bookId}/{userId}")
+    @PostMapping("/add/{bookId}")
     @ApiOperation(value = "添加购物车")
-    public Result addCart(@PathVariable Integer bookId,@PathVariable Long userId)
+    public Result addCart(@PathVariable Integer bookId, @RequestParam Long userId,@RequestParam Integer count)
     {
         User user = userService.getUserById(Math.toIntExact(userId));
         if (user == null)
         {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("不存在该用户!");
         }
-        return cartService.addCart(user,bookId);
+        if (count == null || count <= 0)
+        {
+            return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("物品数量非法!");
+        }
+        return cartService.addCart(user,bookId,count);
     }
 
     @ResponseBody

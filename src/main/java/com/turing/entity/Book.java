@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.turing.entity.dto.BookDto;
+import com.turing.utils.BeanListUtils;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -14,8 +15,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,27 +27,47 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ApiModel(value = "Book",description = "书籍信息")
-public class Book
+public class Book extends BookBaseInfo
 {
     @TableId(value = "id",type = IdType.AUTO)
     private Integer id;
 
-    private String name;
-
+    /**
+     * 书籍图片
+     */
     private String photo;
 
-    @TableField(value = "tag_id")
     private String tagId;
 
-
-    private String description;
+    /**
+     * 评价标签
+     */
+    private String commentTag;
 
     /**
-     * 图书类型
-     * 0表示出书
-     * 1表示求书
+     * 售价
      */
-    private Integer type;
+    private BigDecimal sellingPrice;
+
+    private BigDecimal freight;
+
+    /**
+     * 库存数量
+     */
+    private Integer stock;
+
+    /**
+     * 发货地址
+     */
+    private Integer addressId;
+    /**
+     * 评价数
+     */
+    private Integer commentCount;
+    /**
+     * 好评率
+     */
+    private Double activeRate;
 
     @TableField(value = "user_id")
     private Integer userId;
@@ -55,8 +76,6 @@ public class Book
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Timestamp createdTime;
-
-    private BigDecimal price;
 
     /**
      * 图书当前状态
@@ -68,29 +87,9 @@ public class Book
     public void transform(BookDto bookDto)
     {
         BeanUtils.copyProperties(bookDto,this);
-        StringBuilder photoString = new StringBuilder();
-        StringBuilder tagIdString = new StringBuilder();
-        List<String> photoList = bookDto.getPhotoList();
-        List<String > tagIdList = bookDto.getTagIdList();
-        for (int i = 0; i < photoList.size(); i++) {
-            if (i < photoList.size() - 1)
-            {
-                photoString.append(photoList.get(i)+",");
-            }else
-            {
-                photoString.append(photoList.get(i));
-            }
-        }
-        for (int i = 0; i < tagIdList.size(); i++) {
-            if (i < tagIdList.size() - 1)
-            {
-                tagIdString.append(tagIdList.get(i) + ",");
-            }else
-            {
-                tagIdString.append(tagIdList.get(i));
-            }
-        }
-        this.setPhoto(photoString.toString());
-        this.setTagId(tagIdString.toString());
+
+        this.setPhoto(BeanListUtils.transform(bookDto.getPhotoList()));
+        this.setTagId(BeanListUtils.transform(bookDto.getTagIdList()));
+        this.setCommentTag(BeanListUtils.transform(bookDto.getCommentTagList()));
     }
 }

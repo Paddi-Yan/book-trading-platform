@@ -23,7 +23,7 @@ public class WechatUserInfo implements Serializable
 
     @ApiModelProperty(required = true)
     private String openid;
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(hidden = true)
     private String nickname;
 
     @ApiModelProperty(hidden = true)
@@ -31,7 +31,7 @@ public class WechatUserInfo implements Serializable
     /**
      * 头像
      */
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(hidden = true)
     private String avatar;
 
     /**
@@ -52,7 +52,7 @@ public class WechatUserInfo implements Serializable
      * 要通过encryptedData和iv解密获得
      * gender(性别) 0-未知 1-男 2-女
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(required = true)
     private String gender;
     @ApiModelProperty(hidden = true)
     private String city;

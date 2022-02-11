@@ -38,17 +38,18 @@ public class Cart
     private Date addTime;
     private int deleted;
     private BigDecimal price;
+    private Integer count;
+    private BigDecimal total;
 
     public void transform(User user, Book book)
     {
         this.setUserId(user.getId());
         this.setBookId(book.getId());
-        this.setBookName(book.getName());
-        this.setBookPhoto(book.getPhoto());
-        this.setPrice(book.getPrice());
+        this.setBookName(book.getTitle());
+        this.setBookPhoto(book.getCover());
+        this.setPrice(book.getSellingPrice());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = simpleDateFormat.parse(simpleDateFormat.format(new Date()),new ParsePosition(0));
-        System.out.println(date.toString());
         this.setAddTime(date);
 
     }
