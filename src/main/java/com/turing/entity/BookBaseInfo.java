@@ -1,14 +1,11 @@
 package com.turing.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * @Author: 又蠢又笨的懒羊羊程序猿
@@ -18,8 +15,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 //@TableName(value = "book_base_info")
-public class BookBaseInfo
-{
+public class BookBaseInfo {
     /**
      * ISBN编码
      */
@@ -44,7 +40,7 @@ public class BookBaseInfo
     /**
      * 出版时间按
      */
-    private String  pubdate;
+    private String pubdate;
     /**
      * 作者
      */

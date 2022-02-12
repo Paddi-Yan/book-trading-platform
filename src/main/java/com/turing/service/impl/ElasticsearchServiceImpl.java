@@ -29,62 +29,55 @@ import java.util.Map;
  */
 @Service
 @Slf4j
-public class ElasticsearchServiceImpl implements ElasticsearchService
-{
+public class ElasticsearchServiceImpl implements ElasticsearchService {
     @Autowired
     private RestHighLevelClient client;
 
     @Override
-    public Result search(RequestParams params)
-    {
+    public Result search (RequestParams params) {
         SearchRequest request = new SearchRequest(params.getType());
-        buildBasicQuery(params,request);
+        buildBasicQuery(params, request);
         SearchResponse response = null;
         try {
-             response = client.search(request, RequestOptions.DEFAULT);
+            response = client.search(request, RequestOptions.DEFAULT);
         } catch (IOException e) {
             e.printStackTrace();
-            log.warn("Elasticsearch查询失败===>>>{}",params);
+            log.warn("Elasticsearch查询失败===>>>{}", params);
             return new Result().fail(HttpStatusCode.ERROR).message("服务器内部出现错误,查询失败!");
         }
         return handleResponse(response);
     }
 
-    private Result handleResponse(SearchResponse response)
-    {
+    private Result handleResponse (SearchResponse response) {
         long seconds = response.getTook().seconds();
         SearchHits hits = response.getHits();
         long total = hits.getTotalHits().value;
-        log.info("Elasticsearch查询成功,耗时{}s,共{}条数据",seconds,total);
-        Map<String,Object> result = new HashMap<>();
+        log.info("Elasticsearch查询成功,耗时{}s,共{}条数据", seconds, total);
+        Map<String, Object> result = new HashMap<>();
         List<String> data = new ArrayList<>();
-        result.put("total",total);
+        result.put("total", total);
         for (SearchHit hit : hits) {
             data.add(hit.getSourceAsString());
         }
-        result.put("data",data);
+        result.put("data", data);
         return new Result().success(result);
     }
 
-    private void buildBasicQuery(RequestParams params, SearchRequest request)
-    {
+    private void buildBasicQuery (RequestParams params, SearchRequest request) {
         String content = params.getContent();
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
         // 搜索内容
-        if (StringUtils.isBlank(content))
-        {
+        if (StringUtils.isBlank(content)) {
             queryBuilder.must(QueryBuilders.matchAllQuery());
-        }else
-        {
-            queryBuilder.must(QueryBuilders.matchQuery("key",content));
+        } else {
+            queryBuilder.must(QueryBuilders.matchQuery("key", content));
         }
 
-        queryBuilder.must(QueryBuilders.matchQuery("status",1));
+        queryBuilder.must(QueryBuilders.matchQuery("status", 1));
         Integer minPrice = params.getMinPrice();
         Integer maxPrice = params.getMaxPrice();
         // 价格
-        if (minPrice!=null && maxPrice!=null)
-        {
+        if (minPrice != null && maxPrice != null) {
             maxPrice = maxPrice.intValue() == 0 ? Integer.MAX_VALUE : maxPrice;
             queryBuilder.must(QueryBuilders.rangeQuery("price").gte(minPrice).lte(maxPrice));
         }

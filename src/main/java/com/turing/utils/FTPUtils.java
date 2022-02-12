@@ -16,19 +16,17 @@ import java.util.UUID;
  * @CreateTime: 2022年01月22日 11:45:28
  */
 @Slf4j
-public class FTPUtils
-{
+public class FTPUtils {
     private static FTPClient client = null;
     private static final String FTP_ADDRESS = "120.25.145.86";
     private static final int FTP_PORT = 21;
     private static String FTP_USERNAME = "user";
     private static String FTP_PASSWORD = "123456";
-    private static String DATE = "/"+new SimpleDateFormat("yyyy-MM-dd").format(new Date())+"/";
-    private static String FTP_BASEPATH = "/home/user"+DATE;
+    private static String DATE = "/" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + "/";
+    private static String FTP_BASEPATH = "/home/user" + DATE;
     private static String FTP_DELETE_BASEPATH = "/home/user";
 
-    public static String upload(MultipartFile file) throws Exception
-    {
+    public static String upload (MultipartFile file) throws Exception {
         InputStream inputStream = null;
         String filename = null;
         try {
@@ -37,43 +35,38 @@ public class FTPUtils
             filename = file.getOriginalFilename();
             filename = UUID.randomUUID() + "-" + filename;
             boolean storeFile = client.storeFile(filename, inputStream);
-            if (storeFile)
-            {
-                log.info("文件[{}]上传成功!",(DATE+filename));
+            if (storeFile) {
+                log.info("文件[{}]上传成功!", (DATE + filename));
             }
-            return DATE+filename;
+            return DATE + filename;
         } catch (IOException e) {
             e.printStackTrace();
-            log.warn("文件[{}]上传失败!",(DATE+filename));
-        }finally {
+            log.warn("文件[{}]上传失败!", (DATE + filename));
+        } finally {
             destroy();
         }
         throw new Exception("文件上传失败!");
     }
 
-    public static void delete(String filePath) throws Exception
-    {
+    public static void delete (String filePath) throws Exception {
         init();
-        String filepath = filePath.substring(0, filePath.lastIndexOf("/")+1);
-        client.changeWorkingDirectory(FTP_DELETE_BASEPATH+filepath);
-        String filename = filePath.substring(filePath.lastIndexOf("/")+1);
+        String filepath = filePath.substring(0, filePath.lastIndexOf("/") + 1);
+        client.changeWorkingDirectory(FTP_DELETE_BASEPATH + filepath);
+        String filename = filePath.substring(filePath.lastIndexOf("/") + 1);
         boolean deleteStates = client.deleteFile(filename);
-        if (!deleteStates)
-        {
-            log.warn("文件[{}]删除失败!",filepath+filename);
-        }else
-        {
-            log.info("文件[{}]删除成功!",filepath+filename);
+        if (!deleteStates) {
+            log.warn("文件[{}]删除失败!", filepath + filename);
+        } else {
+            log.info("文件[{}]删除成功!", filepath + filename);
         }
         destroy();
     }
 
-    private static void init() throws Exception
-    {
+    private static void init () throws Exception {
         client = new FTPClient();
         client.setControlEncoding("utf-8");
-        client.connect(FTP_ADDRESS,FTP_PORT);
-        client.login(FTP_USERNAME,FTP_PASSWORD);
+        client.connect(FTP_ADDRESS, FTP_PORT);
+        client.login(FTP_USERNAME, FTP_PASSWORD);
         if (!FTPReply.isPositiveCompletion(client.getReplyCode())) {
             client.disconnect();
             log.error("FTPClient Connected Error");
@@ -81,24 +74,19 @@ public class FTPUtils
         }
         log.info("FTPClient Connected Success!");
         client.setFileType(FTPClient.BINARY_FILE_TYPE);
-        if (!client.changeWorkingDirectory(FTP_BASEPATH))
-        {
+        if (!client.changeWorkingDirectory(FTP_BASEPATH)) {
             client.makeDirectory(FTP_BASEPATH);
             client.changeWorkingDirectory(FTP_BASEPATH);
         }
     }
 
 
-    private static void destroy() throws Exception
-    {
+    private static void destroy () throws Exception {
         client.logout();
-        if (client.isConnected())
-        {
+        if (client.isConnected()) {
             client.disconnect();
         }
     }
-
-
 
 
 }

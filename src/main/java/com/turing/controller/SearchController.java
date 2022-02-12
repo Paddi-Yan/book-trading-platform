@@ -19,10 +19,9 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/search")
-@Api(description = "搜索书籍/用户/社区接口",tags = "SearchController")
+@Api(description = "搜索书籍/用户/社区接口", tags = "SearchController")
 @Slf4j
-public class SearchController
-{
+public class SearchController {
     @Autowired
     private ElasticsearchService elasticsearchService;
 
@@ -30,19 +29,14 @@ public class SearchController
     @ApiOperation("搜索获取信息-不需要认证")
     @ResponseBody
     @NoNeedToAuthorized
-    private Result search(@RequestBody RequestParams params)
-    {
-        if (params.getType() == null)
-        {
+    private Result search (@RequestBody RequestParams params) {
+        if (params.getType() == null) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("必须携带参数[key]指定搜索类型");
         }
         String key = params.getType();
-        if (StringUtils.isBlank(key)
-                && !ElasticsearchIndex.BOOK.equals(key)
-                && !ElasticsearchIndex.COMMUNITY.equals(key)
-                && !ElasticsearchIndex.USER.equals(key))
-        {
-            return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("携带参数[key]错误! <书籍:book 用户:user 社群:community>");
+        if (StringUtils.isBlank(key) && !ElasticsearchIndex.BOOK.equals(key) && !ElasticsearchIndex.COMMUNITY.equals(key) && !ElasticsearchIndex.USER.equals(key)) {
+            return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR)
+                    .message("携带参数[key]错误! <书籍:book 用户:user 社群:community>");
         }
         return elasticsearchService.search(params);
     }

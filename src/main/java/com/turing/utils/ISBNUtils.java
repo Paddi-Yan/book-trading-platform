@@ -3,9 +3,7 @@ package com.turing.utils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.ConvertUtils;
-import org.springframework.beans.factory.annotation.Value;
 
-import java.util.Arrays;
 import java.util.UnknownFormatConversionException;
 import java.util.regex.Pattern;
 
@@ -14,8 +12,7 @@ import java.util.regex.Pattern;
  * @CreateTime: 2022年02月09日 14:30:34
  */
 @Slf4j
-public class ISBNUtils
-{
+public class ISBNUtils {
     /**
      * 所需值
      */
@@ -32,7 +29,7 @@ public class ISBNUtils
     private static final String X = "X";
 
 
-    public static Boolean checkIsbn(String isbn) {
+    public static Boolean checkIsbn (String isbn) {
         //获取计算加权和所需要的值
         String substring = isbn.substring(ZERO, isbn.length() - ONE);
         //加权和S
@@ -78,7 +75,7 @@ public class ISBNUtils
             Integer[] isbnArr = (Integer[]) ConvertUtils.convert(substring.split(""), Integer.class);
             //计算加权和：用1分别乘ISBN的前12位中的奇数位，用3乘以偶数位，然后将两者相加，即得到加权和
             for (int i = ZERO; i < isbnArr.length; i++) {
-                s=i%TWO==ZERO?isbnArr[i]*ONE+s:isbnArr[i]*THREE+s;
+                s = i % TWO == ZERO ? isbnArr[i] * ONE + s : isbnArr[i] * THREE + s;
             }
             //取余数M
             Integer m = s % TEN;
@@ -90,7 +87,7 @@ public class ISBNUtils
     }
 
 
-    public static void main(String[] args) {
+    public static void main (String[] args) {
         System.out.println(String.format("10位测试结果:%s", checkIsbn("7309045475")));
         System.out.println(String.format("13位测试结果:%s", checkIsbn("9787212058123")));
     }

@@ -12,12 +12,10 @@ import javax.servlet.http.HttpServletResponse;
  * @CreateTime: 2022年01月21日 17:02:28
  */
 @Configuration
-public class CrossInterceptor implements HandlerInterceptor
-{
+public class CrossInterceptor implements HandlerInterceptor {
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception
-    {
-        String origin  = request.getHeader(HttpHeaders.ORIGIN);
+    public boolean preHandle (HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        String origin = request.getHeader(HttpHeaders.ORIGIN);
         if (origin != null) {
             response.setHeader("Access-Control-Allow-Origin", "*");
             response.setHeader("Access-Control-Allow-Credentials", "true");

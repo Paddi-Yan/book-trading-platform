@@ -9,7 +9,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @CreateTime: 2022年01月21日 22:14:16
  */
 @Mapper
-public interface TagMapper extends BaseMapper<Tag>
-{
+public interface TagMapper extends BaseMapper<Tag> {
 
 }

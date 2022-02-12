@@ -16,9 +16,8 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(value = "UserDto",description = "用户信息")
-public class UserDto implements Serializable
-{
+@ApiModel(value = "UserDto", description = "用户信息")
+public class UserDto implements Serializable {
     private static final long serialVersionUID = -3992971186990897627L;
     private Long id;
     private String nickname;
@@ -31,9 +30,8 @@ public class UserDto implements Serializable
     //拓展信息
     private String token;
 
-    public void transform(WechatUserInfo wechatUserInfo)
-    {
-//        this.id = wechatUserInfo.getUserId();
+    public void transform (WechatUserInfo wechatUserInfo) {
+        //        this.id = wechatUserInfo.getUserId();
         this.nickname = wechatUserInfo.getNickname();
         this.avatar = wechatUserInfo.getAvatar();
         this.username = "";
@@ -42,9 +40,8 @@ public class UserDto implements Serializable
         this.openid = wechatUserInfo.getOpenid();
     }
 
-    public void transform(User user)
-    {
-        BeanUtils.copyProperties(user,this);
+    public void transform (User user) {
+        BeanUtils.copyProperties(user, this);
         this.username = "";
         this.mobile = "";
     }

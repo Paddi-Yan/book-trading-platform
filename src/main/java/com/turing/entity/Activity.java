@@ -21,9 +21,8 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(value = "Activity",description = "活动信息")
-public class Activity
-{
+@ApiModel(value = "Activity", description = "活动信息")
+public class Activity {
     @TableId(type = IdType.AUTO)
     private Long id;
     /**
@@ -68,17 +67,14 @@ public class Activity
      */
     private String tags;
 
-    public void transform(ActivityDto activityDto)
-    {
-        BeanUtils.copyProperties(activityDto,this);
+    public void transform (ActivityDto activityDto) {
+        BeanUtils.copyProperties(activityDto, this);
         StringBuilder stringBuilder = new StringBuilder();
         List<String> tags = activityDto.getTags();
         for (int i = 0; i < tags.size(); i++) {
-            if (i < tags.size() - 1)
-            {
-                stringBuilder.append(tags.get(i)+",");
-            }else
-            {
+            if (i < tags.size() - 1) {
+                stringBuilder.append(tags.get(i) + ",");
+            } else {
                 stringBuilder.append(tags.get(i));
             }
         }

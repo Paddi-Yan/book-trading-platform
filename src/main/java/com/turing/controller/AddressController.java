@@ -4,11 +4,9 @@ import com.turing.common.HttpStatusCode;
 import com.turing.common.Result;
 import com.turing.entity.Address;
 import com.turing.entity.User;
-import com.turing.interceptor.NoNeedToAuthorized;
 import com.turing.service.AddressService;
 import com.turing.service.UserService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,9 +21,8 @@ import java.util.regex.Pattern;
  */
 @RestController
 @RequestMapping("/address")
-@Api(description = "常用收货地址信息",tags = "AddressController")
-public class AddressController
-{
+@Api(description = "常用收货地址信息", tags = "AddressController")
+public class AddressController {
     @Autowired
     private AddressService addressService;
     @Autowired
@@ -36,16 +33,13 @@ public class AddressController
     @PostMapping("/addAddress")
     @ResponseBody
     @ApiOperation("添加常用收货地址")
-    public Result addAddress(@RequestBody Address address)
-    {
+    public Result addAddress (@RequestBody Address address) {
         User user = userService.getUserById(address.getUserId());
-        if (user == null)
-        {
+        if (user == null) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("用户编号不存在,无法添加地址!");
         }
         Matcher matcher = pattern.matcher(address.getMobile());
-        if (!matcher.find())
-        {
+        if (!matcher.find()) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("联系方式不合法,无法添加地址!");
         }
         return addressService.addAddress(address);
@@ -54,11 +48,9 @@ public class AddressController
     @GetMapping("/getAddress")
     @ResponseBody
     @ApiOperation("获取常用收货地址")
-    public Result getAddress(@RequestParam("userId") Integer userId)
-    {
+    public Result getAddress (@RequestParam("userId") Integer userId) {
         User user = userService.getUserById(userId);
-        if (user == null)
-        {
+        if (user == null) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("用户编号不存在,无法获取该用户的常用地址!");
         }
         return addressService.getAddress(userId);
@@ -67,17 +59,14 @@ public class AddressController
     @PutMapping("/editAddress/{id}")
     @ResponseBody
     @ApiOperation("修改常用收货地址")
-    public Result editAddress(@RequestBody Address address,@PathVariable(name = "id",value = "id",required = true) Integer id)
-    {
+    public Result editAddress (@RequestBody Address address, @PathVariable(name = "id", value = "id", required = true) Integer id) {
         address.setId(id);
         User user = userService.getUserById(address.getUserId());
-        if (user == null)
-        {
+        if (user == null) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("用户编号不存在,无法修改地址!");
         }
         Matcher matcher = pattern.matcher(address.getMobile());
-        if (!matcher.find())
-        {
+        if (!matcher.find()) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("联系方式不合法,无法修改地址!");
         }
         return addressService.editAddress(address);
@@ -86,13 +75,11 @@ public class AddressController
     @DeleteMapping("/deleteAddress")
     @ResponseBody
     @ApiOperation("单个/批量删除常用收获地址")
-    public Result deleteAddress(@RequestParam Integer userId,@RequestBody List<Integer> addressIdList)
-    {
+    public Result deleteAddress (@RequestParam Integer userId, @RequestBody List<Integer> addressIdList) {
         User user = userService.getUserById(userId);
-        if (user == null)
-        {
+        if (user == null) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("用户编号不存在,无法修改地址!");
         }
-        return addressService.deleteAddress(userId,addressIdList);
+        return addressService.deleteAddress(userId, addressIdList);
     }
 }

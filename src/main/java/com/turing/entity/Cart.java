@@ -1,7 +1,5 @@
 package com.turing.entity;
 
-import cn.hutool.core.date.DateUnit;
-import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -12,7 +10,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,9 +21,8 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(value = "Cart",description = "购物车信息")
-public class Cart
-{
+@ApiModel(value = "Cart", description = "购物车信息")
+public class Cart {
     @TableId(type = IdType.AUTO)
     private Long id;
     private Long userId;
@@ -41,15 +37,14 @@ public class Cart
     private Integer count;
     private BigDecimal total;
 
-    public void transform(User user, Book book)
-    {
+    public void transform (User user, Book book) {
         this.setUserId(user.getId());
         this.setBookId(book.getId());
         this.setBookName(book.getTitle());
         this.setBookPhoto(book.getCover());
         this.setPrice(book.getSellingPrice());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = simpleDateFormat.parse(simpleDateFormat.format(new Date()),new ParsePosition(0));
+        Date date = simpleDateFormat.parse(simpleDateFormat.format(new Date()), new ParsePosition(0));
         this.setAddTime(date);
 
     }

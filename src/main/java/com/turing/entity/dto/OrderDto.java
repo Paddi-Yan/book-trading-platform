@@ -25,8 +25,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class OrderDto
-{
+public class OrderDto {
     @ApiModelProperty(hidden = true)
     private Long id;
 
@@ -48,18 +47,18 @@ public class OrderDto
 
     private Long userId;
 
-    @ApiModelProperty(required = false,name = "cartId",value = "如果是从购物车提交订单需携带该参数",hidden = true)
+    @ApiModelProperty(required = false, name = "cartId", value = "如果是从购物车提交订单需携带该参数", hidden = true)
     private Long cartId;
 
     private Integer addressId;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "Asia/Shanghai")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @ApiModelProperty(hidden = true)
     private LocalDateTime createdTime;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "Asia/Shanghai")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @ApiModelProperty(hidden = true)
@@ -82,12 +81,10 @@ public class OrderDto
     @ApiModelProperty(hidden = true)
     private String status;
 
-    public void transform(Order order)
-    {
+    public void transform (Order order) {
 
-        BeanUtils.copyProperties(order,this);
-        switch (order.getStatus())
-        {
+        BeanUtils.copyProperties(order, this);
+        switch (order.getStatus()) {
             case -1:
                 this.setStatus(OrderStatus.CANCELED.getStatus());
                 break;

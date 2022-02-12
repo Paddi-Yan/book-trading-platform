@@ -23,48 +23,41 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Component
 @Slf4j
-public class TokenVerifyInterceptor implements HandlerInterceptor
-{
+public class TokenVerifyInterceptor implements HandlerInterceptor {
     @Autowired
     private RedisTemplate redisTemplate;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception
-    {
+    public boolean preHandle (HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         //判断请求url是否是请求controller方法
-        if (!(handler instanceof HandlerMethod))
-        {
+        if (!(handler instanceof HandlerMethod)) {
             return true;
         }
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         //有些接口不需要做登录拦截 开发自定义注解@NoNeedToAuthorized-标注注解表示不需要登录就可以访问
-        if (handlerMethod.hasMethodAnnotation(NoNeedToAuthorized.class))
-        {
+        if (handlerMethod.hasMethodAnnotation(NoNeedToAuthorized.class)) {
             return true;
         }
 
         //获取token
         String token = request.getHeader(JWTUtils.AUTH_HEADER_KEY);
-        if (StringUtils.isBlank(token))
-        {
+        if (StringUtils.isBlank(token)) {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(new Result().fail(HttpStatusCode.UNAUTHORIZED)));
             return false;
         }
-        token = token.replace(JWTUtils.TOKEN_PREFIX,"");
+        token = token.replace(JWTUtils.TOKEN_PREFIX, "");
         //验证token
         boolean verify = JWTUtils.verify(token);
         //token认证通过放行/不通过返回未登录状态
-        if (!verify)
-        {
+        if (!verify) {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(new Result().fail(HttpStatusCode.UNAUTHORIZED)));
             return false;
         }
         //token验证通过-从redis中获取用户信息
         UserDto userDto = (UserDto) redisTemplate.opsForValue().get(RedisKey.TOKEN + token);
-        if (userDto == null)
-        {
+        if (userDto == null) {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(new Result().fail(HttpStatusCode.UNAUTHORIZED)));
             return false;

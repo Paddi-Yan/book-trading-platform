@@ -1,15 +1,14 @@
 package com.turing.mapper;
 
-import com.turing.entity.Comment;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import io.swagger.models.auth.In;
+import com.turing.entity.Comment;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author qds
@@ -18,7 +17,7 @@ import java.util.List;
 @Mapper
 public interface CommentMapper extends BaseMapper<Comment> {
 
-    List<Comment> getCommentByPostId(Integer postId);
+    List<Comment> getCommentByPostId (Integer postId);
 
-    List<Comment> getCommentByUserId(Integer userId);
+    List<Comment> getCommentByUserId (Integer userId);
 }

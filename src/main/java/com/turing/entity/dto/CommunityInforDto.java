@@ -52,13 +52,13 @@ public class CommunityInforDto implements Serializable {
     @ApiModelProperty("发表数")
     private Integer sentCount;
 
-    public void transform(CommunityInfor communityInfor, Integer attention, Integer topic) {
+    public void transform (CommunityInfor communityInfor, Integer attention, Integer topic) {
         BeanUtils.copyProperties(communityInfor, this);
         this.attention = attention;
         this.topic = topic;
     }
 
-    public void transform(CommunityInfor communityInfor, Integer attention, Integer topic, Integer heat, Integer sentCount) {
+    public void transform (CommunityInfor communityInfor, Integer attention, Integer topic, Integer heat, Integer sentCount) {
         BeanUtils.copyProperties(communityInfor, this);
         this.attention = attention;
         this.topic = topic;

@@ -16,13 +16,14 @@ public class LikeService {
 
     /**
      * Key(like_post_{postId}) : Value({userId})
+     *
      * @param postId
      * @param userId
      */
-    public void like(Integer postId, Integer userId) {
+    public void like (Integer postId, Integer userId) {
         redisTemplate.execute(new SessionCallback() {
             @Override
-            public Object execute(RedisOperations redisOperations) throws DataAccessException {
+            public Object execute (RedisOperations redisOperations) throws DataAccessException {
                 String entityLikeKey = RedisKey.LIKE_POST + postId;
 
                 // 判断用户是否已经点过赞了
@@ -45,7 +46,7 @@ public class LikeService {
     /**
      * 查询某实体被点赞的数量
      */
-    public long likeCount(Integer postId) {
+    public long likeCount (Integer postId) {
         String entityLikeKey = RedisKey.LIKE_POST + postId;
         return redisTemplate.opsForSet().size(entityLikeKey);
     }
@@ -55,7 +56,7 @@ public class LikeService {
      *
      * @return 1:已赞，0:未赞
      */
-    public int userLikeStatus(Integer userId, Integer postId) {
+    public int userLikeStatus (Integer userId, Integer postId) {
         String entityLikeKey = RedisKey.LIKE_POST + postId;
         return redisTemplate.opsForSet().isMember(entityLikeKey, userId) ? 1 : 0;
     }

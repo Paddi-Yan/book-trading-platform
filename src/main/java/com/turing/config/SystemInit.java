@@ -20,14 +20,12 @@ import java.util.ArrayList;
  */
 @Component
 @Slf4j
-public class SystemInit
-{
+public class SystemInit {
     @Autowired
     private RestHighLevelClient client;
 
     @PostConstruct
-    public void initElasticSearch()
-    {
+    public void initElasticSearch () {
         log.info("========================ES初始化开始==========================");
         try {
             ArrayList<String> arrayList = new ArrayList<>();
@@ -36,19 +34,18 @@ public class SystemInit
             for (String index : arrayList) {
                 GetIndexRequest getIndexRequest = new GetIndexRequest(index);
                 Boolean exists = client.indices().exists(getIndexRequest, RequestOptions.DEFAULT);
-                log.info(index+"索引是否存在:"+exists);
-                if (!exists)
-                {
+                log.info(index + "索引是否存在:" + exists);
+                if (!exists) {
                     CreateIndexRequest createIndexRequest = new CreateIndexRequest(index);
-                    switch (index){
+                    switch (index) {
                         case ElasticsearchIndex.BOOK:
                             createIndexRequest.source(ElasticsearchIndex.BOOK_INDEX, XContentType.JSON);
                             break;
                         case ElasticsearchIndex.USER:
-                            createIndexRequest.source(ElasticsearchIndex.USER_INDEX,XContentType.JSON);
+                            createIndexRequest.source(ElasticsearchIndex.USER_INDEX, XContentType.JSON);
                             break;
                     }
-                    client.indices().create(createIndexRequest,RequestOptions.DEFAULT);
+                    client.indices().create(createIndexRequest, RequestOptions.DEFAULT);
                 }
             }
             log.info("========================ES初始化完毕==========================");

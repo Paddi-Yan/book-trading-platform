@@ -24,9 +24,8 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(value = "BookDto",description = "书籍信息")
-public class BookDto implements Serializable
-{
+@ApiModel(value = "BookDto", description = "书籍信息")
+public class BookDto implements Serializable {
     private static final long serialVersionUID = 3036528493640743015L;
 
     @ApiModelProperty(hidden = true)
@@ -112,7 +111,7 @@ public class BookDto implements Serializable
      * 分类标签
      */
     @ApiModelProperty(required = true)
-    private List<String > tagIdList;
+    private List<String> tagIdList;
     @ApiModelProperty(hidden = true)
     private List<String> commentTagList;
 
@@ -123,25 +122,21 @@ public class BookDto implements Serializable
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date createdTime;
 
-    public void transform(Book book)
-    {
-        BeanUtils.copyProperties(book,this);
+    public void transform (Book book) {
+        BeanUtils.copyProperties(book, this);
         this.activeRate = book.getActiveRate() + "%";
-        List<String > tags = new ArrayList<>();
+        List<String> tags = new ArrayList<>();
         List<String> photos = new ArrayList<>();
         List<String> commentTagList = new ArrayList<>();
-        if (StringUtils.isNotBlank(book.getPhoto()))
-        {
+        if (StringUtils.isNotBlank(book.getPhoto())) {
             photos = Arrays.asList(book.getPhoto().split(","));
             this.setPhotoList(photos);
         }
-        if (StringUtils.isNotBlank(book.getTagId()))
-        {
+        if (StringUtils.isNotBlank(book.getTagId())) {
             tags = Arrays.asList(book.getTagId().split(","));
             this.setTagIdList(tags);
         }
-        if (StringUtils.isNotBlank(book.getCommentTag()))
-        {
+        if (StringUtils.isNotBlank(book.getCommentTag())) {
             commentTagList = Arrays.asList(book.getCommentTag().split(","));
             this.setCommentTagList(commentTagList);
         }

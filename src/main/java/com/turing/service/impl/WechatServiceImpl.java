@@ -1,25 +1,21 @@
 package com.turing.service.impl;
 
-import cn.hutool.core.codec.Base64;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.turing.common.ElasticsearchIndex;
 import com.turing.common.HttpStatusCode;
 import com.turing.common.RedisKey;
 import com.turing.common.Result;
 import com.turing.entity.User;
 import com.turing.entity.dto.UserDto;
-import com.turing.entity.dto.WechatLoginInfo;
 import com.turing.entity.dto.WechatUserInfo;
 import com.turing.entity.elasticsearch.UserDoc;
 import com.turing.mapper.UserMapper;
 import com.turing.service.UserService;
 import com.turing.service.WechatService;
 import com.turing.utils.DecryptUtils;
-import com.turing.utils.IPUtils;
 import com.turing.utils.JWTUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.index.IndexRequest;
@@ -31,17 +27,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.Cipher;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
-import java.security.spec.AlgorithmParameterSpec;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -50,8 +39,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 @Slf4j
-public class WechatServiceImpl implements WechatService
-{
+public class WechatServiceImpl implements WechatService {
     @Autowired
     private RedisTemplate redisTemplate;
 
@@ -71,38 +59,37 @@ public class WechatServiceImpl implements WechatService
     private RestHighLevelClient client;
 
     @Override
-    public String getSessionKey(String code)
-    {
-        log.info("appid:{}",appid);
-        log.info("secret:{}",secret);
-        log.info("code:{}",code);
+    public String getSessionKey (String code) {
+        log.info("appid:{}", appid);
+        log.info("secret:{}", secret);
+        log.info("code:{}", code);
         //调用微信登录凭证校验接口
         String urr = "https://api.weixin.qq.com/sns/jscode2session?appid=APPID&secret=SECRET&js_code=JSCODE&grant_type=authorization_code";
         String url = "https://api.weixin.qq.com/sns/jscode2session?appid=APPID&secret=SECRET&js_code=JSCODE&grant_type=authorization_code";
-        String replaceUrl = url.replace("APPID",appid).replace("SECRET", secret).replace("JSCODE", code).replace("'","");
-        log.info("URL:{}",replaceUrl);
+        String replaceUrl = url.replace("APPID", appid)
+                .replace("SECRET", secret)
+                .replace("JSCODE", code)
+                .replace("'", "");
+        log.info("URL:{}", replaceUrl);
         //发起http请求获取微信的返回结果
         return HttpUtil.get(replaceUrl);
     }
 
     @Override
-    public Result wechatLogin(String openid, String sessionKey, WechatUserInfo wechatUserInfo)
-    {
+    public Result wechatLogin (String openid, String sessionKey, WechatUserInfo wechatUserInfo) {
         //通过openid唯一标识取查询数据库是否有用户信息
         User user = userService.getUserByOpenId(openid);
         System.out.println(user.toString());
         System.out.println(wechatUserInfo.toString());
         //数据查询为空
-        if (user == null)
-        {
+        if (user == null) {
             //用户注册
             user = new User();
             user.transform(wechatUserInfo);
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             user.setRegisterTime(Timestamp.valueOf(simpleDateFormat.format(new Date())));
             return this.registry(user);
-        }else
-        {
+        } else {
             //用户登录
             user.setLastLoginIP(wechatUserInfo.getLastLoginIP());
             return this.login(user);
@@ -110,19 +97,16 @@ public class WechatServiceImpl implements WechatService
     }
 
     @Override
-    public Result getUserInfo(WechatUserInfo wechatUserInfo)
-    {
-        if (wechatUserInfo == null)
-        {
+    public Result getUserInfo (WechatUserInfo wechatUserInfo) {
+        if (wechatUserInfo == null) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("用户信息不能为空!");
         }
         User user = userMapper.selectOne(new QueryWrapper<User>().eq("openid", wechatUserInfo.getOpenid()));
         user.setNickname(wechatUserInfo.getNickname());
         user.setAvatar(wechatUserInfo.getAvatar());
-        if (wechatUserInfo.getSessionKey()!=null && wechatUserInfo.getEncryptedData()!=null && wechatUserInfo.getIv()!=null)
-        {
+        if (wechatUserInfo.getSessionKey() != null && wechatUserInfo.getEncryptedData() != null && wechatUserInfo.getIv() != null) {
             String decryptJson = DecryptUtils.decrypt(wechatUserInfo.getSessionKey(), wechatUserInfo.getEncryptedData(), wechatUserInfo.getIv());
-            log.info("解密后的数据:{}",decryptJson);
+            log.info("解密后的数据:{}", decryptJson);
             JSONObject jsonObject = JSON.parseObject(decryptJson);
             user.setGender(String.valueOf(jsonObject.getInteger("gender")));
             user.setCity(jsonObject.getString("city"));
@@ -136,28 +120,26 @@ public class WechatServiceImpl implements WechatService
             operateElasticsearchData(userDoc);
         } catch (IOException e) {
             e.printStackTrace();
-            log.warn("Elasticsearch插入用户数据失败===>>>{}",userDoc);
+            log.warn("Elasticsearch插入用户数据失败===>>>{}", userDoc);
         }
         UserDto userDto = new UserDto();
         userDto.transform(user);
         return new Result().success(userDto);
     }
 
-    public Result login(User user)
-    {
+    public Result login (User user) {
         //签发Token
         String token = JWTUtils.sign(user.getId());
         UserDto userDto = new UserDto();
         userDto.transform(user);
         userDto.setToken(token);
-        log.info("用户[{}]登录凭证[{}]",userDto,RedisKey.TOKEN+token);
+        log.info("用户[{}]登录凭证[{}]", userDto, RedisKey.TOKEN + token);
         //存入缓存
-        redisTemplate.opsForValue().set(RedisKey.TOKEN+token,userDto,7, TimeUnit.DAYS);
+        redisTemplate.opsForValue().set(RedisKey.TOKEN + token, userDto, 7, TimeUnit.DAYS);
         return new Result().success(userDto);
     }
 
-    public Result registry(User user)
-    {
+    public Result registry (User user) {
         UserDoc userDoc = null;
         userMapper.insert(user);
         try {
@@ -166,14 +148,13 @@ public class WechatServiceImpl implements WechatService
             operateElasticsearchData(userDoc);
         } catch (Exception e) {
             e.printStackTrace();
-            log.warn("Elasticsearch插入用户数据失败===>>>{}",userDoc);
+            log.warn("Elasticsearch插入用户数据失败===>>>{}", userDoc);
             return new Result().fail(HttpStatusCode.ERROR);
         }
         return this.login(user);
     }
 
-    private void operateElasticsearchData(UserDoc userDoc) throws IOException
-    {
+    private void operateElasticsearchData (UserDoc userDoc) throws IOException {
         IndexRequest request = new IndexRequest(ElasticsearchIndex.USER).id(userDoc.getId().toString());
         String jsonString = JSON.toJSONString(userDoc);
         request.source(jsonString, XContentType.JSON);

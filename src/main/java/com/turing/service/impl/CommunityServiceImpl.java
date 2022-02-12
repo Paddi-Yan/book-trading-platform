@@ -43,13 +43,13 @@ public class CommunityServiceImpl extends ServiceImpl<CommunityInforMapper, Comm
     RedisTemplate redisTemplate;
 
     @Override
-    public Result getCommunity(Integer userId) {
+    public Result getCommunity (Integer userId) {
         List<CommunityInfor> communityByUserId = communityInforMapper.getCommunityByUserId(userId);
         return new Result().success(communityByUserId);
     }
 
     @Override
-    public Result getCommunityInformation(Integer communityId) {
+    public Result getCommunityInformation (Integer communityId) {
         CommunityInfor communityInfor = communityInforMapper.selectById(communityId);
         CommunityInforDto communityInforDto = new CommunityInforDto();
         Integer attention = 0;
@@ -67,18 +67,18 @@ public class CommunityServiceImpl extends ServiceImpl<CommunityInforMapper, Comm
 
         heat = hotService.getHot(communityId);
 
-        communityInforDto.transform(communityInfor,attention,topic,heat,sentCount);
+        communityInforDto.transform(communityInfor, attention, topic, heat, sentCount);
         return new Result().success(communityInforDto);
     }
 
     @Override
-    public Result createCommunity(CommunityInfor communityInfor) {
+    public Result createCommunity (CommunityInfor communityInfor) {
         communityInforMapper.insert(communityInfor);
         return new Result().success(null);
     }
 
     @Override
-    public Result getCommunityByType(Integer type) {
+    public Result getCommunityByType (Integer type) {
 
         QueryWrapper<CommunityInfor> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("kind", type);
@@ -103,7 +103,7 @@ public class CommunityServiceImpl extends ServiceImpl<CommunityInforMapper, Comm
     }
 
     @Override
-    public Result getCommunityRecommend() {
+    public Result getCommunityRecommend () {
         List<CommunityInfor> list = list();
         List<CommunityInforDto> dtoList = new ArrayList<>();
 
@@ -122,29 +122,32 @@ public class CommunityServiceImpl extends ServiceImpl<CommunityInforMapper, Comm
 
         Stream<CommunityInforDto> stream = dtoList.stream();
         List<CommunityInforDto> collect = stream.sorted((a, b) -> b.getAttention() - a.getAttention())
-                .limit(20).collect(Collectors.toList());
+                .limit(20)
+                .collect(Collectors.toList());
         return new Result().success(collect);
     }
 
     @Override
-    public Result getCommunityHot() {
+    public Result getCommunityHot () {
         Set keys = redisTemplate.keys(RedisKey.Hot);
         System.out.println(keys.toString());
-        Map<Integer,Integer> map = new TreeMap<>(new Comparator<Integer>() {
+        Map<Integer, Integer> map = new TreeMap<>(new Comparator<Integer>() {
             @Override
-            public int compare(Integer o1, Integer o2) {
-                return o2-o1;
+            public int compare (Integer o1, Integer o2) {
+                return o2 - o1;
             }
         });
         for (Object key : keys) {
-            Integer hotCount = (Integer)redisTemplate.opsForValue().get(key);
-            Integer comId = Integer.valueOf(((String)key).substring(4));
-            map.put(comId,hotCount);
+            Integer hotCount = (Integer) redisTemplate.opsForValue().get(key);
+            Integer comId = Integer.valueOf(((String) key).substring(4));
+            map.put(comId, hotCount);
         }
 
-        List<Integer> collect = map.entrySet().stream()
-                .sorted((o1, o2) -> o2.getValue() - o1.getValue()).limit(20)
-                .map(Map.Entry::getKey)
+        List<Integer> collect = map.entrySet()
+                .stream()
+                .sorted((o1, o2) -> o2.getValue() - o1.getValue())
+                .limit(20)
+                .map(Map.Entry :: getKey)
                 .collect(Collectors.toList());
 
         System.out.println(collect);

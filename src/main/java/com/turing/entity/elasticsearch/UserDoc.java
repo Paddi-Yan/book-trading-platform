@@ -13,8 +13,7 @@ import java.io.Serializable;
  */
 @Data
 @Document(indexName = "user")
-public class UserDoc implements Serializable
-{
+public class UserDoc implements Serializable {
     private static final long serialVersionUID = -6969673532311086756L;
     private Long id;
     private String nickname;
@@ -22,9 +21,8 @@ public class UserDoc implements Serializable
     private String avatar;
     private String mobile;
 
-    public void transform(User user)
-    {
-        BeanUtils.copyProperties(user,this);
+    public void transform (User user) {
+        BeanUtils.copyProperties(user, this);
     }
 
 }

@@ -10,20 +10,19 @@ import org.springframework.web.multipart.MultipartFile;
  * @Author: 又蠢又笨的懒羊羊程序猿
  * @CreateTime: 2022年01月29日 13:43:52
  */
-public interface ActivityService
-{
+public interface ActivityService {
 
-    Result addActivity(User user, ActivityDto activityDto, QuestionAndAnswer[] questionAndAnswers);
+    Result addActivity (User user, ActivityDto activityDto, QuestionAndAnswer[] questionAndAnswers);
 
-    Result operateActivityCover(MultipartFile file, Long id);
+    Result operateActivityCover (MultipartFile file, Long id);
 
-    Result getActivity();
+    Result getActivity ();
 
-    Result updateActivity(User user, ActivityDto activityDto, QuestionAndAnswer[] questionAndAnswers);
+    Result updateActivity (User user, ActivityDto activityDto, QuestionAndAnswer[] questionAndAnswers);
 
-    Result passExamine(Long id);
+    Result passExamine (Long id);
 
-    Result withdraw(Long id);
+    Result withdraw (Long id);
 
-    Result getActivityById(Long id);
+    Result getActivityById (Long id);
 }

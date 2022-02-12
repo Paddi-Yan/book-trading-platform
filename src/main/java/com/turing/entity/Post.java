@@ -2,10 +2,6 @@ package com.turing.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.List;
-
 import com.turing.entity.dto.PostDto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -14,9 +10,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.List;
+
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author qds
@@ -59,85 +59,76 @@ public class Post implements Serializable {
     private LocalDateTime createTime;
 
 
-    public Long getPostId() {
+    public Long getPostId () {
         return postId;
     }
 
-    public void setPostId(Long postId) {
+    public void setPostId (Long postId) {
         this.postId = postId;
     }
 
-    public Long getCommunityId() {
+    public Long getCommunityId () {
         return communityId;
     }
 
-    public void setCommunityId(Long communityId) {
+    public void setCommunityId (Long communityId) {
         this.communityId = communityId;
     }
 
-    public Long getUserId() {
+    public Long getUserId () {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId (Long userId) {
         this.userId = userId;
     }
 
-    public Integer getBookId() {
+    public Integer getBookId () {
         return bookId;
     }
 
-    public void setBookId(Integer bookId) {
+    public void setBookId (Integer bookId) {
         this.bookId = bookId;
     }
 
-    public String getTitle() {
+    public String getTitle () {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle (String title) {
         this.title = title;
     }
 
-    public String getContent() {
+    public String getContent () {
         return content;
     }
 
-    public void setContent(String content) {
+    public void setContent (String content) {
         this.content = content;
     }
 
-    public Integer getType() {
+    public Integer getType () {
         return type;
     }
 
-    public void setType(Integer type) {
+    public void setType (Integer type) {
         this.type = type;
     }
 
-    public LocalDateTime getCreateTime() {
+    public LocalDateTime getCreateTime () {
         return createTime;
     }
 
-    public void setCreateTime(LocalDateTime createTime) {
+    public void setCreateTime (LocalDateTime createTime) {
         this.createTime = createTime;
     }
 
     @Override
-    public String toString() {
-        return "Post{" +
-        "postId=" + postId +
-        ", communityId=" + communityId +
-        ", userId=" + userId +
-        ", bookId=" + bookId +
-        ", title=" + title +
-        ", content=" + content +
-        ", type=" + type +
-        ", createTime=" + createTime +
-        "}";
+    public String toString () {
+        return "Post{" + "postId=" + postId + ", communityId=" + communityId + ", userId=" + userId + ", bookId=" + bookId + ", title=" + title + ", content=" + content + ", type=" + type + ", createTime=" + createTime + "}";
     }
 
-    public void transform(PostDto postDto) {
+    public void transform (PostDto postDto) {
         BeanUtils.copyProperties(postDto, this);
         StringBuilder photoString = new StringBuilder();
         List<String> photoList = postDto.getPhotoList();

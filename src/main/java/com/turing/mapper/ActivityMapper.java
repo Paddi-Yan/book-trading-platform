@@ -9,6 +9,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @CreateTime: 2022年01月29日 14:12:02
  */
 @Mapper
-public interface ActivityMapper extends BaseMapper<Activity>
-{
+public interface ActivityMapper extends BaseMapper<Activity> {
 }

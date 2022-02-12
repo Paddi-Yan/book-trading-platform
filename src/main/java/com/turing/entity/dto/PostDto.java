@@ -64,13 +64,15 @@ public class PostDto implements Serializable {
     private Integer likeCount;
 
 
-    public void transform(Post post, Integer commentCount, Integer likeCount) {
+    public void transform (Post post, Integer commentCount, Integer likeCount) {
         BeanUtils.copyProperties(post, this);
         this.setCommentCount(commentCount);
         this.setLikeCount(likeCount);
 
         List<String> photos = new ArrayList<>();
-        if (post.getPhoto() == null) return;
+        if (post.getPhoto() == null) {
+            return;
+        }
         photos = Arrays.asList(post.getPhoto().split(","));
         this.setPhotoList(photos);
     }

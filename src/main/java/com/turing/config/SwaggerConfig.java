@@ -18,7 +18,10 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @Author: 又蠢又笨的懒羊羊程序猿
@@ -26,20 +29,18 @@ import java.util.*;
  */
 @Configuration
 @EnableSwagger2
-public class SwaggerConfig
-{
+public class SwaggerConfig {
     @Value("${spring.swagger2.enabled}")
     private Boolean enabled;
 
     @Bean
-    public Docket createRestApi()
-    {
+    public Docket createRestApi () {
         List<ResponseMessage> messageList = new ArrayList<>();
         Arrays.stream(HttpStatusCode.values()).forEach(statusCode -> {
-            messageList.add(
-                    new ResponseMessageBuilder().code(statusCode.getCode()).message(statusCode.getMessage()).responseModel(
-                            new ModelRef(statusCode.getMessage())).build()
-            );
+            messageList.add(new ResponseMessageBuilder().code(statusCode.getCode())
+                    .message(statusCode.getMessage())
+                    .responseModel(new ModelRef(statusCode.getMessage()))
+                    .build());
         });
 
         return new Docket(DocumentationType.SWAGGER_2)
@@ -58,34 +59,30 @@ public class SwaggerConfig
                 .securityContexts(securityContexts());
     }
 
-    public ApiInfo apiInfo()
-    {
-        return new ApiInfoBuilder()
-                .title("微信小程序接口文档"+"\t"+new SimpleDateFormat("yyyy-MM-dd").format(new Date()))
+    public ApiInfo apiInfo () {
+        return new ApiInfoBuilder().title("微信小程序接口文档" + "\t" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()))
                 .description("Wechat Mini Programmer API Document")
                 .version("1.0")
                 .build();
     }
 
-    private List<ApiKey> security() {
+    private List<ApiKey> security () {
         List<ApiKey> apiKeyList = new ArrayList<>();
         String authHeaderKey = JWTUtils.AUTH_HEADER_KEY;
         apiKeyList.add(new ApiKey(authHeaderKey, authHeaderKey, "header"));
         return apiKeyList;
     }
 
-    private List<SecurityContext> securityContexts() {
-        List<SecurityContext> securityContexts=new ArrayList<>();
-        securityContexts.add(
-                SecurityContext.builder()
-                        .securityReferences(defaultAuth())
-                        .forPaths(PathSelectors.regex("^(?!auth).*$"))
-                        .build());
+    private List<SecurityContext> securityContexts () {
+        List<SecurityContext> securityContexts = new ArrayList<>();
+        securityContexts.add(SecurityContext.builder()
+                .securityReferences(defaultAuth())
+                .forPaths(PathSelectors.regex("^(?!auth).*$"))
+                .build());
         return securityContexts;
     }
 
-    private List<SecurityReference> defaultAuth()
-    {
+    private List<SecurityReference> defaultAuth () {
         AuthorizationScope authorizationScope = new AuthorizationScope("Global Token Authorization", "Bearer {token} can access everything.");
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
         authorizationScopes[0] = authorizationScope;

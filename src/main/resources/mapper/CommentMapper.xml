@@ -3,13 +3,15 @@
 <mapper namespace="com.turing.mapper.CommentMapper">
 
     <select id="getCommentByPostId" resultType="com.turing.entity.Comment" parameterType="integer">
-        select i.* from comment i
-                            left join post p on p.post_id = i.post_id
+        select i.*
+        from comment i
+                 left join post p on p.post_id = i.post_id
         where i.post_id = #{postId}
     </select>
     <select id="getCommentByUserId" resultType="com.turing.entity.Comment" parameterType="integer">
-        select i.* from comment i
-                            left join user u on u.id = i.user_id
+        select i.*
+        from comment i
+                 left join user u on u.id = i.user_id
         where user_id = #{userId}
     </select>
 </mapper>

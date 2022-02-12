@@ -11,12 +11,10 @@ import javax.servlet.http.HttpServletResponse;
  * @CreateTime: 2022年01月21日 17:06:51
  */
 @Component
-public class OptionsInterceptor implements HandlerInterceptor
-{
+public class OptionsInterceptor implements HandlerInterceptor {
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception
-    {
-        if(request.getMethod().equals("OPTIONS")){
+    public boolean preHandle (HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        if (request.getMethod().equals("OPTIONS")) {
             response.setStatus(HttpServletResponse.SC_OK);
             return false;
         }

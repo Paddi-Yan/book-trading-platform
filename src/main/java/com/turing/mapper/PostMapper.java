@@ -1,14 +1,14 @@
 package com.turing.mapper;
 
-import com.turing.entity.Post;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.turing.entity.Post;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author qds
@@ -17,10 +17,10 @@ import java.util.List;
 @Mapper
 public interface PostMapper extends BaseMapper<Post> {
 
-    List<Post> getPostByCommunityId(Integer communityId);
+    List<Post> getPostByCommunityId (Integer communityId);
 
-    List<Post> getPostByUserId(Integer userId);
+    List<Post> getPostByUserId (Integer userId);
 
-    List<Post> getPostByBookId(Integer bookId);
+    List<Post> getPostByBookId (Integer bookId);
 
 }

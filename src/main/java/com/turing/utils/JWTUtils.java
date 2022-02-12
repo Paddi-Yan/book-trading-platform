@@ -19,45 +19,42 @@ import java.util.Date;
  * @CreateTime: 2022年01月20日 14:14:56
  */
 @Slf4j
-public class JWTUtils
-{
+public class JWTUtils {
     public static final String AUTH_HEADER_KEY = "Authorization";
 
     public static final String TOKEN_PREFIX = "Bearer ";
     /**
      * Token 过期时间为一周
      */
-    public static final Long EXPIRE_TIME = 7 * 24 * 60 * 60 *1000L;
-//    public static final Long EXPIRE_TIME = 1000L;
+    public static final Long EXPIRE_TIME = 7 * 24 * 60 * 60 * 1000L;
+    //    public static final Long EXPIRE_TIME = 1000L;
 
     private static final String SECRET = "Turing";
 
     private static final Logger logger = LoggerFactory.getLogger(Logger.class);
 
-    public static void main(String[] args)
-    {
+    public static void main (String[] args) {
         String token = JWTUtils.sign(1L);
         System.out.println(token);
     }
 
     /**
      * 校验token
+     *
      * @param token
      * @return
      */
-    public static boolean verify(String token)
-    {
+    public static boolean verify (String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(SECRET);
             JWTVerifier jwtVerifier = JWT.require(algorithm).build();
             DecodedJWT jwt = jwtVerifier.verify(token);
-            log.info("Token令牌'{}'校验成功! ",token);
+            log.info("Token令牌'{}'校验成功! ", token);
             return true;
-        }catch (TokenExpiredException e) {
-            log.error("Token令牌'{}'已过期，请重新登录! ",token);
+        } catch (TokenExpiredException e) {
+            log.error("Token令牌'{}'已过期，请重新登录! ", token);
             e.printStackTrace();
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
         } catch (JWTVerificationException e) {
             e.printStackTrace();
@@ -65,8 +62,7 @@ public class JWTUtils
         return false;
     }
 
-    public static Long getUserId(String token)
-    {
+    public static Long getUserId (String token) {
         try {
             DecodedJWT jwt = JWT.decode(token);
             return jwt.getClaim("id").asLong();
@@ -76,15 +72,11 @@ public class JWTUtils
         }
     }
 
-    public static String sign(Long id)
-    {
+    public static String sign (Long id) {
         try {
             Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
             Algorithm algorithm = Algorithm.HMAC256(SECRET);
-            return JWT.create()
-                    .withClaim("id",id)
-                    .withExpiresAt(date)
-                    .sign(algorithm);
+            return JWT.create().withClaim("id", id).withExpiresAt(date).sign(algorithm);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         } catch (JWTCreationException e) {
@@ -93,8 +85,7 @@ public class JWTUtils
         return null;
     }
 
-    public static Boolean isExpired(String token)
-    {
+    public static Boolean isExpired (String token) {
         DecodedJWT jwt = JWT.decode(token);
         Date date = jwt.getExpiresAt();
         return date.before(new Date());

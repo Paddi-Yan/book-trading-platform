@@ -9,6 +9,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @CreateTime: 2022年01月29日 14:14:03
  */
 @Mapper
-public interface QAMapper extends BaseMapper<QuestionAndAnswer>
-{
+public interface QAMapper extends BaseMapper<QuestionAndAnswer> {
 }

@@ -7,11 +7,10 @@ import com.turing.entity.dto.BookCommentDto;
  * @Author: 又蠢又笨的懒羊羊程序猿
  * @CreateTime: 2022年02月09日 17:07:37
  */
-public interface BookCommentService
-{
+public interface BookCommentService {
 
-    Result comment(BookCommentDto bookCommentDto);
+    Result comment (BookCommentDto bookCommentDto);
 
-    Result getCommentByPage(Integer page, Integer size, Integer bookId);
+    Result getCommentByPage (Integer page, Integer size, Integer bookId);
 
 }

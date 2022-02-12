@@ -16,31 +16,26 @@ import java.util.List;
  * @CreateTime: 2022年01月22日 23:38:29
  */
 @Service
-public class AddressServiceImpl implements AddressService
-{
+public class AddressServiceImpl implements AddressService {
     @Autowired
     private AddressMapper addressMapper;
 
     @Override
-    public Result addAddress(Address address)
-    {
+    public Result addAddress (Address address) {
         addressMapper.insert(address);
         return new Result().success(address);
     }
 
     @Override
-    public Result getAddress(Integer userId)
-    {
+    public Result getAddress (Integer userId) {
         List<Address> addressList = addressMapper.selectList(new QueryWrapper<Address>().eq("user_id", userId));
         return new Result().success(addressList);
     }
 
     @Override
-    public Result editAddress(Address address)
-    {
+    public Result editAddress (Address address) {
         Integer count = addressMapper.selectCount(new QueryWrapper<Address>().eq("id", address.getId()));
-        if (count == 0)
-        {
+        if (count == 0) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("不存在该地址信息,修改失败!");
         }
         addressMapper.updateById(address);
@@ -48,12 +43,10 @@ public class AddressServiceImpl implements AddressService
     }
 
     @Override
-    public Result deleteAddress(Integer userId, List<Integer> addressIdList)
-    {
+    public Result deleteAddress (Integer userId, List<Integer> addressIdList) {
         List<Address> addressList = addressMapper.selectBatchIds(addressIdList);
         for (Address address : addressList) {
-            if (!userId.equals(address.getUserId()))
-            {
+            if (!userId.equals(address.getUserId())) {
                 return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("该用户不存在该地址信息,无权限删除!");
             }
         }

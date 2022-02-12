@@ -9,6 +9,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @CreateTime: 2022年01月22日 23:36:29
  */
 @Mapper
-public interface AddressMapper extends BaseMapper<Address>
-{
+public interface AddressMapper extends BaseMapper<Address> {
 }

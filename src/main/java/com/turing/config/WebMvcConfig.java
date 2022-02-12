@@ -3,7 +3,6 @@ package com.turing.config;
 import com.turing.interceptor.CrossInterceptor;
 import com.turing.interceptor.OptionsInterceptor;
 import com.turing.interceptor.TokenVerifyInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -15,8 +14,7 @@ import javax.annotation.Resource;
  * @CreateTime: 2022年01月21日 00:13:19
  */
 @Configuration
-public class WebMvcConfig implements WebMvcConfigurer
-{
+public class WebMvcConfig implements WebMvcConfigurer {
 
     @Resource
     private TokenVerifyInterceptor tokenVerifyInterceptor;
@@ -28,13 +26,11 @@ public class WebMvcConfig implements WebMvcConfigurer
     private OptionsInterceptor optionsInterceptor;
 
     @Override
-    public void addInterceptors(InterceptorRegistry registry)
-    {
+    public void addInterceptors (InterceptorRegistry registry) {
         registry.addInterceptor(crossInterceptor);
         registry.addInterceptor(optionsInterceptor);
-        registry
-                .addInterceptor(tokenVerifyInterceptor)
+        registry.addInterceptor(tokenVerifyInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/swagger-ui.html/**","/swagger-resources/**","/webjars/**","/v2/**");
+                .excludePathPatterns("/swagger-ui.html/**", "/swagger-resources/**", "/webjars/**", "/v2/**");
     }
 }

@@ -3,15 +3,13 @@ package com.turing.utils;
 
 import com.baomidou.mybatisplus.generator.FastAutoGenerator;
 import com.baomidou.mybatisplus.generator.config.OutputFile;
-import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 
 import java.util.Collections;
 
 public class MyBatisPlusCode {//代码生成
-    public static void main(String[] args) {
-        FastAutoGenerator.create("jdbc:mysql://localhost:3306/sys?useUnicode=true&characterEncoding=utf-8&useSSL=false",
-                        "root",
-                        "123456")
+
+    public static void main (String[] args) {
+        FastAutoGenerator.create("jdbc:mysql://localhost:3306/sys?useUnicode=true&characterEncoding=utf-8&useSSL=false", "root", "123456")
                 .globalConfig(builder -> {
                     builder.author("qds") // 设置作者
                             .enableSwagger() // 开启 swagger 模式
@@ -27,7 +25,7 @@ public class MyBatisPlusCode {//代码生成
                     builder.addInclude("community_infor") // 设置需要生成的表名
                             .addTablePrefix("t_", "c_"); // 设置过滤表前缀
                 })
-//                .templateEngine(new FreemarkerTemplateEngine()) // 使用Freemarker引擎模板，默认的是Velocity引擎模板
+                //                .templateEngine(new FreemarkerTemplateEngine()) // 使用Freemarker引擎模板，默认的是Velocity引擎模板
                 .execute();
 
     }

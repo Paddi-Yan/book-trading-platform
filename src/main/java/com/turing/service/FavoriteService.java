@@ -9,11 +9,10 @@ import java.util.List;
  * @Author: 又蠢又笨的懒羊羊程序猿
  * @CreateTime: 2022年01月22日 19:13:24
  */
-public interface FavoriteService
-{
-    Result addFavorite(Integer userId, Book book);
+public interface FavoriteService {
+    Result addFavorite (Integer userId, Book book);
 
-    Result getFavorites(Integer userId);
+    Result getFavorites (Integer userId);
 
-    Result deleteFavorite(Integer userId, List<Integer> favoriteList);
+    Result deleteFavorite (Integer userId, List<Integer> favoriteList);
 }

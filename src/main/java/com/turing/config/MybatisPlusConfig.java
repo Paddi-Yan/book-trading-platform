@@ -1,7 +1,6 @@
 package com.turing.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.enums.DBType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
@@ -15,11 +14,9 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @MapperScan({"com.turing.mapper"})
-public class MybatisPlusConfig
-{
+public class MybatisPlusConfig {
     @Bean
-    public MybatisPlusInterceptor mybatisPlusInterceptor()
-    {
+    public MybatisPlusInterceptor mybatisPlusInterceptor () {
         MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
         //添加分页插件
         mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));

@@ -19,9 +19,8 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(value = "BookCommentDto",description = "书籍评论信息")
-public class BookCommentDto
-{
+@ApiModel(value = "BookCommentDto", description = "书籍评论信息")
+public class BookCommentDto {
     @ApiModelProperty(hidden = true)
     private Integer id;
 
@@ -36,20 +35,17 @@ public class BookCommentDto
     @ApiModelProperty(required = true)
     private Long userId;
 
-    @ApiModelProperty(required = true,name = "type",value = "评价类型 差评-0 中评-1 好评-2")
+    @ApiModelProperty(required = true, name = "type", value = "评价类型 差评-0 中评-1 好评-2")
     private Integer type;
 
     private List<String> commentTag;
 
-    public void transform(BookComment comment)
-    {
-        BeanUtils.copyProperties(comment,this);
-        if (StringUtils.isNotBlank(comment.getPhoto()))
-        {
+    public void transform (BookComment comment) {
+        BeanUtils.copyProperties(comment, this);
+        if (StringUtils.isNotBlank(comment.getPhoto())) {
             this.setPhoto(Arrays.asList(comment.getPhoto().split(",")));
         }
-        if (StringUtils.isNotBlank(comment.getCommentTag()))
-        {
+        if (StringUtils.isNotBlank(comment.getCommentTag())) {
             this.setPhoto(Arrays.asList(comment.getCommentTag().split(",")));
         }
     }

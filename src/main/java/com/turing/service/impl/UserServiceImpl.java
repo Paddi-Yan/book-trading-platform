@@ -1,6 +1,5 @@
 package com.turing.service.impl;
 
-import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.turing.common.ElasticsearchIndex;
@@ -9,7 +8,6 @@ import com.turing.common.RedisKey;
 import com.turing.common.Result;
 import com.turing.entity.Book;
 import com.turing.entity.User;
-import com.turing.entity.dto.WechatUserInfo;
 import com.turing.entity.dto.BookDto;
 import com.turing.entity.dto.UserDto;
 import com.turing.entity.elasticsearch.BookDoc;
@@ -21,20 +19,18 @@ import com.turing.service.WechatService;
 import com.turing.utils.JWTUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -44,8 +40,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Slf4j
 @Transactional(rollbackFor = Exception.class)
-public class UserServiceImpl implements UserService
-{
+public class UserServiceImpl implements UserService {
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -137,29 +132,24 @@ public class UserServiceImpl implements UserService
      */
 
     @Override
-    public Result getUserInfo(Boolean refreshToken)
-    {
+    public Result getUserInfo (Boolean refreshToken) {
         UserDto userDto = UserThreadLocal.getUserInfoFromThread();
-        if (refreshToken)
-        {
+        if (refreshToken) {
             String token = JWTUtils.sign(userDto.getId());
             userDto.setToken(token);
-            redisTemplate.opsForValue().set(RedisKey.TOKEN+token,userDto,7,TimeUnit.DAYS);
+            redisTemplate.opsForValue().set(RedisKey.TOKEN + token, userDto, 7, TimeUnit.DAYS);
         }
         return new Result().success(userDto);
     }
 
     @Override
-    public User getUserById(Integer userId)
-    {
+    public User getUserById (Integer userId) {
         return userMapper.selectById(userId);
     }
 
     @Override
-    public Result getBookInfo(Integer userId, Integer type)
-    {
-        List<Book> books = bookMapper.selectList(new QueryWrapper<Book>()
-                .eq("user_id", userId)
+    public Result getBookInfo (Integer userId, Integer type) {
+        List<Book> books = bookMapper.selectList(new QueryWrapper<Book>().eq("user_id", userId)
                 .eq("type", type)
                 .orderByDesc("created_time"));
         List<BookDto> bookDtoList = new ArrayList<>();
@@ -173,8 +163,7 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public Result updateBookInfo(BookDto bookDto)
-    {
+    public Result updateBookInfo (BookDto bookDto) {
         Book book = new Book();
         book.transform(bookDto);
         bookMapper.updateById(book);
@@ -185,24 +174,23 @@ public class UserServiceImpl implements UserService
         request.doc(json, XContentType.JSON);
         try {
             client.update(request, RequestOptions.DEFAULT);
-            log.info("Elasticsearch修改书籍信息成功:{}",bookDoc);
+            log.info("Elasticsearch修改书籍信息成功:{}", bookDoc);
         } catch (IOException e) {
             e.printStackTrace();
-            log.warn("Elasticsearch修改书籍信息失败:{}",bookDoc);
+            log.warn("Elasticsearch修改书籍信息失败:{}", bookDoc);
         }
         return new Result().success(bookDto);
     }
 
     /**
      * 下架图书
+     *
      * @return
      */
     @Override
-    public Result withdrawBookInfo(Integer bookId, Integer userId)
-    {
+    public Result withdrawBookInfo (Integer bookId, Integer userId) {
         Book book = bookMapper.selectOne(new QueryWrapper<Book>().eq("id", bookId).eq("user_id", userId));
-        if (book == null)
-        {
+        if (book == null) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("图书编号不存在或该用户无修改该图书权限!");
         }
         //将书籍标记为已失效
@@ -210,51 +198,48 @@ public class UserServiceImpl implements UserService
         bookMapper.updateById(book);
 
         UpdateRequest request = new UpdateRequest(ElasticsearchIndex.BOOK, String.valueOf(book.getId()));
-        request.doc(XContentType.JSON,"status",0);
+        request.doc(XContentType.JSON, "status", 0);
         try {
             client.update(request, RequestOptions.DEFAULT);
-            log.info("Elasticsearch修改编号为[{}]的书籍信息状态成功,目前状态为已下架",book.getId());
+            log.info("Elasticsearch修改编号为[{}]的书籍信息状态成功,目前状态为已下架", book.getId());
         } catch (IOException e) {
             e.printStackTrace();
-            log.warn("Elasticsearch修改编号为[{}]的书籍信息失败:",book.getId());
+            log.warn("Elasticsearch修改编号为[{}]的书籍信息失败:", book.getId());
         }
         return new Result().success(book);
     }
 
     /**
      * 删除已下架的图书信息
+     *
      * @return
      */
     @Override
-    public Result deleteHistory(Integer bookId, Integer userId)
-    {
+    public Result deleteHistory (Integer bookId, Integer userId) {
         QueryWrapper<Book> queryWrapper = new QueryWrapper<Book>().eq("id", bookId).eq("user_id", userId);
         Book book = bookMapper.selectOne(queryWrapper);
         // 查询不到图书信息 || 书籍处于有效中
-        if (book == null)
-        {
+        if (book == null) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("图书编号不存在或该用户无修改该图书权限!");
         }
-        if (book.getStatus().equals(1))
-        {
+        if (book.getStatus().equals(1)) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("图书状态为有效,无法删除");
         }
         bookMapper.delete(queryWrapper);
         DeleteRequest request = new DeleteRequest(ElasticsearchIndex.BOOK, String.valueOf(book.getId()));
         try {
-            client.delete(request,RequestOptions.DEFAULT);
-            log.info("Elasticsearch删除书籍信息成功:{}",book);
+            client.delete(request, RequestOptions.DEFAULT);
+            log.info("Elasticsearch删除书籍信息成功:{}", book);
         } catch (IOException e) {
             e.printStackTrace();
-            log.warn("Elasticsearch删除书籍信息失败:{}",book);
+            log.warn("Elasticsearch删除书籍信息失败:{}", book);
         }
         return new Result().success(book);
     }
 
     @Override
-    public User getUserByOpenId(String openid)
-    {
-        return userMapper.selectOne(new QueryWrapper<User>().eq("openid",openid));
+    public User getUserByOpenId (String openid) {
+        return userMapper.selectOne(new QueryWrapper<User>().eq("openid", openid));
     }
 
 

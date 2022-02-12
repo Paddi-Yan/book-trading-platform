@@ -14,27 +14,26 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-@ApiModel(value = "Address",description = "常用地址信息")
-public class Address
-{
-    @TableId(value = "id",type = IdType.AUTO)
-    @ApiModelProperty(hidden = true,name = "id")
+@ApiModel(value = "Address", description = "常用地址信息")
+public class Address {
+    @TableId(value = "id", type = IdType.AUTO)
+    @ApiModelProperty(hidden = true, name = "id")
     private Integer id;
 
     @TableField(value = "user_id")
-    @ApiModelProperty(value = "所属用户ID",required = true)
+    @ApiModelProperty(value = "所属用户ID", required = true)
     private Integer userId;
 
-    @ApiModelProperty(value = "收货人",required = true)
+    @ApiModelProperty(value = "收货人", required = true)
     private String username;
 
-    @ApiModelProperty(value = "联系电话",required = true)
+    @ApiModelProperty(value = "联系电话", required = true)
     private String mobile;
 
-    @ApiModelProperty(value = "地区",required = true)
+    @ApiModelProperty(value = "地区", required = true)
     private String area;
 
     @TableField(value = "detail_address")
-    @ApiModelProperty(value = "详细地址",required = true)
+    @ApiModelProperty(value = "详细地址", required = true)
     private String detailAddress;
 }

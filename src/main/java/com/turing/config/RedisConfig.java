@@ -16,11 +16,9 @@ import java.io.Serializable;
  */
 @Configuration
 @Slf4j
-public class RedisConfig
-{
+public class RedisConfig {
     @Bean
-    public RedisTemplate<String , Serializable> redisTemplate(LettuceConnectionFactory lettuceConnectionFactory)
-    {
+    public RedisTemplate<String, Serializable> redisTemplate (LettuceConnectionFactory lettuceConnectionFactory) {
         RedisTemplate<String, Serializable> redisTemplate = new RedisTemplate<>();
 
         redisTemplate.setConnectionFactory(lettuceConnectionFactory);

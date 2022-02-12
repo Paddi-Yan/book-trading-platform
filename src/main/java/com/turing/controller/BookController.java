@@ -2,14 +2,13 @@ package com.turing.controller;
 
 import com.turing.common.HttpStatusCode;
 import com.turing.common.Result;
-import com.turing.entity.dto.BookDto;
 import com.turing.entity.User;
+import com.turing.entity.dto.BookDto;
 import com.turing.interceptor.NoNeedToAuthorized;
 import com.turing.service.BookService;
 import com.turing.service.UserService;
 import com.turing.utils.FTPUtils;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,39 +25,32 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/book")
-@Api(description = "书籍接口",tags = "BookController")
-public class BookController
-{
+@Api(description = "书籍接口", tags = "BookController")
+public class BookController {
     @Autowired
     private UserService userService;
 
     @Autowired
     private BookService bookService;
 
-    @PostMapping(value = "/uploadBook",headers = "content-type=multipart/form-data;")
+    @PostMapping(value = "/uploadBook", headers = "content-type=multipart/form-data;")
     @ResponseBody
     @ApiOperation("上传书籍信息")
-    public Result uploadBookInfo(BookDto bookDto,@RequestParam(name = "files",required = false) MultipartFile[] files) throws ParseException
-    {
-        if (bookDto.getStock() == null || bookDto.getStock() <= 0)
-        {
+    public Result uploadBookInfo (BookDto bookDto, @RequestParam(name = "files", required = false) MultipartFile[] files) throws ParseException {
+        if (bookDto.getStock() == null || bookDto.getStock() <= 0) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("书籍数量非法,请重新上传!");
         }
-        if (bookDto.getUserId() == null)
-        {
+        if (bookDto.getUserId() == null) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("用户ID不能为空");
         }
-        if (bookDto.getFreight() == null || bookDto.getFreight().compareTo(BigDecimal.valueOf(0)) < 0)
-        {
+        if (bookDto.getFreight() == null || bookDto.getFreight().compareTo(BigDecimal.valueOf(0)) < 0) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("邮费信息非法!");
         }
         User user = userService.getUserById(bookDto.getUserId());
-        if (user == null)
-        {
+        if (user == null) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("不存在该用户ID");
         }
-        if (files != null && files.length > 0)
-        {
+        if (files != null && files.length > 0) {
             List<String> bookList = new ArrayList<>();
             for (MultipartFile file : files) {
                 //上传图片 返回图片地址
@@ -84,8 +76,7 @@ public class BookController
     @PostMapping("/getBookByISBN")
     @ApiOperation("通过ISBN编码获取图书信息")
     @NoNeedToAuthorized
-    public Result getBookBaseInfo(@RequestParam String ISBN)
-    {
+    public Result getBookBaseInfo (@RequestParam String ISBN) {
         return bookService.getBookInfoByISBN(ISBN);
     }
 
@@ -93,8 +84,7 @@ public class BookController
     @GetMapping("/getBookInfo")
     @ApiOperation("获取公共图书列表-不需要认证")
     @NoNeedToAuthorized
-    public Result getAllBookInfo()
-    {
+    public Result getAllBookInfo () {
         return bookService.getBookInfo();
     }
 
@@ -102,8 +92,7 @@ public class BookController
     @GetMapping("/getBookByTag")
     @ApiOperation("根据分类获取图书列表-不需要认证")
     @NoNeedToAuthorized
-    public Result getBookByTags(Integer tag)
-    {
+    public Result getBookByTags (Integer tag) {
         return bookService.getBookInfoByTag(tag);
     }
 
@@ -111,8 +100,7 @@ public class BookController
     @GetMapping("/getBookDetails/{id}")
     @ApiOperation("获取书籍详情-不需要认证")
     @NoNeedToAuthorized
-    public Result getBookDetails(@PathVariable Integer id)
-    {
+    public Result getBookDetails (@PathVariable Integer id) {
         return bookService.getBookInfoByBookId(id);
     }
 

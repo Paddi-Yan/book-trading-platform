@@ -14,8 +14,7 @@ import org.springframework.data.elasticsearch.config.AbstractElasticsearchConfig
  */
 @Configuration
 @Data
-public class ElasticsearchConfig extends AbstractElasticsearchConfiguration
-{
+public class ElasticsearchConfig extends AbstractElasticsearchConfiguration {
 
     @Value("${elasticsearch.host}")
     private String host;
@@ -24,10 +23,7 @@ public class ElasticsearchConfig extends AbstractElasticsearchConfiguration
     private Integer port;
 
     @Override
-    public RestHighLevelClient elasticsearchClient()
-    {
-        return new RestHighLevelClient(
-                RestClient.builder(new HttpHost(host,port,"http"))
-        );
+    public RestHighLevelClient elasticsearchClient () {
+        return new RestHighLevelClient(RestClient.builder(new HttpHost(host, port, "http")));
     }
 }

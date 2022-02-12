@@ -9,4 +9,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @CreateTime: 2022年01月30日 16:10:18
  */
 @Mapper
-public interface CartMapper extends BaseMapper<Cart> {}
+public interface CartMapper extends BaseMapper<Cart> {
+}

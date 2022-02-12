@@ -13,9 +13,8 @@ import java.util.List;
  * @CreateTime: 2022年01月22日 19:12:37
  */
 @Mapper
-public interface FavoriteMapper extends BaseMapper<Favorite>
-{
+public interface FavoriteMapper extends BaseMapper<Favorite> {
     @Select("SELECT f.*,b.* FROM `favorite` f LEFT JOIN `book` b ON f.book_id = b.id  WHERE f.user_id = ${userId} ORDER BY f.created_time DESC")
     @ResultMap("FavoriteResultMap")
-    List<Favorite> selectFavoriteList(Integer userId);
+    List<Favorite> selectFavoriteList (Integer userId);
 }

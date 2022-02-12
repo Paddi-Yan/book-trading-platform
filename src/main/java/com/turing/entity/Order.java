@@ -1,6 +1,5 @@
 package com.turing.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.turing.common.OrderStatus;
@@ -21,8 +20,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName(value = "orders")
-public class Order
-{
+public class Order {
 
     @TableId
     private Long id;
@@ -64,11 +62,9 @@ public class Order
     private Integer status;
 
 
-    public void transform(OrderDto orderDto)
-    {
-        BeanUtils.copyProperties(orderDto,this);
-        switch (orderDto.getStatus())
-        {
+    public void transform (OrderDto orderDto) {
+        BeanUtils.copyProperties(orderDto, this);
+        switch (orderDto.getStatus()) {
             case "订单被取消或未在十五分钟内支付自动取消":
                 this.setStatus(OrderStatus.CANCELED.getCode());
                 break;

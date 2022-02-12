@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.beans.BeanUtils;
 
-import java.util.List;
-
 /**
  * @Author: 又蠢又笨的懒羊羊程序猿
  * @CreateTime: 2022年02月09日 12:24:08
@@ -20,9 +18,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class BookComment
-{
-    @TableId(value = "id",type = IdType.AUTO)
+public class BookComment {
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     /**
@@ -54,9 +51,8 @@ public class BookComment
      */
     private String commentTag;
 
-    public void transform(BookCommentDto bookCommentDto)
-    {
-        BeanUtils.copyProperties(bookCommentDto,this);
+    public void transform (BookCommentDto bookCommentDto) {
+        BeanUtils.copyProperties(bookCommentDto, this);
         this.setPhoto(BeanListUtils.transform(bookCommentDto.getPhoto()));
         this.setCommentTag(BeanListUtils.transform(bookCommentDto.getCommentTag()));
     }

@@ -19,19 +19,16 @@ import java.util.ArrayList;
  */
 @RestController
 @RequestMapping("/bookComment")
-@Api(description = "书籍评论",tags = "BookCommentController")
-public class BookCommentController
-{
+@Api(description = "书籍评论", tags = "BookCommentController")
+public class BookCommentController {
     @Autowired
     private BookCommentService commentService;
 
-    @PostMapping(value = "/comment",headers = "content-type=multipart/form-data;")
+    @PostMapping(value = "/comment", headers = "content-type=multipart/form-data;")
     @ResponseBody
     @ApiOperation("用户评论书籍")
-    public Result comment(@RequestParam(name = "files",required = false) MultipartFile[] files,BookCommentDto bookCommentDto)
-    {
-        if (files != null && files.length > 0)
-        {
+    public Result comment (@RequestParam(name = "files", required = false) MultipartFile[] files, BookCommentDto bookCommentDto) {
+        if (files != null && files.length > 0) {
             ArrayList<String> photoList = new ArrayList<>();
             //上传评论图片
             for (MultipartFile file : files) {
@@ -51,9 +48,8 @@ public class BookCommentController
     @ResponseBody
     @ApiOperation("分页查询书籍的评论-不需要认证")
     @NoNeedToAuthorized
-    public Result getCommentByPage(Integer page,Integer size,Integer bookId)
-    {
-        return commentService.getCommentByPage(page,size,bookId);
+    public Result getCommentByPage (Integer page, Integer size, Integer bookId) {
+        return commentService.getCommentByPage(page, size, bookId);
     }
 
 

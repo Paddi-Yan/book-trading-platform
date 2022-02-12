@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.turing.entity.dto.UserDto;
 import com.turing.entity.dto.WechatUserInfo;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,8 +14,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.sql.Timestamp;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * @Author: 又蠢又笨的懒羊羊程序猿
@@ -25,10 +22,9 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(value = "User",description = "用户信息")
-public class User
-{
-    @TableId(value = "id",type = IdType.AUTO)
+@ApiModel(value = "User", description = "用户信息")
+public class User {
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     private String openid;
@@ -65,15 +61,13 @@ public class User
     @TableField("last_login_ip")
     private String lastLoginIP;
 
-    public void transform(UserDto userDto)
-    {
-        BeanUtils.copyProperties(userDto,this);
+    public void transform (UserDto userDto) {
+        BeanUtils.copyProperties(userDto, this);
     }
 
-    public void transform(WechatUserInfo wechatUserInfo)
-    {
-        BeanUtils.copyProperties(wechatUserInfo,this);
-        switch (wechatUserInfo.getGender()){
+    public void transform (WechatUserInfo wechatUserInfo) {
+        BeanUtils.copyProperties(wechatUserInfo, this);
+        switch (wechatUserInfo.getGender()) {
             case "0":
                 this.setGender("女");
                 break;
@@ -82,7 +76,6 @@ public class User
                 break;
         }
     }
-
 
 
 }

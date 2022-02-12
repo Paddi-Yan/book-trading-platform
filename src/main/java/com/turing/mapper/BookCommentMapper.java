@@ -9,6 +9,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @CreateTime: 2022年02月09日 17:06:52
  */
 @Mapper
-public interface BookCommentMapper extends BaseMapper<BookComment>
-{
+public interface BookCommentMapper extends BaseMapper<BookComment> {
 }

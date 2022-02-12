@@ -10,7 +10,6 @@ import com.turing.entity.dto.PostDto;
 import com.turing.mapper.PostMapper;
 import com.turing.service.IPostService;
 import com.turing.service.LikeService;
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,23 +35,23 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
     CommentServiceImpl commentService;
 
     @Override
-    public Result getPostByCommunityId(Integer communityId) {
+    public Result getPostByCommunityId (Integer communityId) {
         List<Post> postList = postMapper.getPostByCommunityId(communityId);
         List<PostDto> postDtoList = new ArrayList<>();
         Integer commentCount = 0;
-        Integer likeCount= 0;
+        Integer likeCount = 0;
 
 
         for (Post post : postList) {
             PostDto postDto = new PostDto();
             int postId = post.getPostId().intValue();
-            likeCount = (int)likeService.likeCount(Integer.valueOf(postId));
+            likeCount = (int) likeService.likeCount(Integer.valueOf(postId));
 
             QueryWrapper<Comment> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("post_id", postId);
             commentCount = commentService.count(queryWrapper);
 
-            postDto.transform(post,commentCount,likeCount);
+            postDto.transform(post, commentCount, likeCount);
             postDtoList.add(postDto);
         }
 
@@ -60,7 +59,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
     }
 
     @Override
-    public Result sendPost(PostDto postDto) {
+    public Result sendPost (PostDto postDto) {
         Post post = new Post();
         post.transform(postDto);
         try {

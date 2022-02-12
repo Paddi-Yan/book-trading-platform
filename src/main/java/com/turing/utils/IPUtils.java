@@ -8,9 +8,8 @@ import java.net.UnknownHostException;
  * @Author: 又蠢又笨的懒羊羊程序猿
  * @CreateTime: 2022年01月24日 12:59:03
  */
-public class IPUtils
-{
-    public static String client(HttpServletRequest request) {
+public class IPUtils {
+    public static String client (HttpServletRequest request) {
         String xff = request.getHeader("x-forwarded-for");
         if (xff == null) {
             xff = request.getRemoteAddr();
@@ -18,7 +17,7 @@ public class IPUtils
         return xff;
     }
 
-    public static String getIpAddr(HttpServletRequest request) {
+    public static String getIpAddr (HttpServletRequest request) {
         String ipAddress = null;
         try {
             ipAddress = request.getHeader("x-forwarded-for");

@@ -14,7 +14,6 @@ import com.turing.service.LikeService;
 import com.turing.utils.FTPUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,7 +54,7 @@ public class PostController {
     @ApiOperation("获取社群所有帖子-不需要认证")
     @PostMapping("/getPostByCommunityId")
     @NoNeedToAuthorized
-    public Result getPostByCommunityId(Integer communityId) {
+    public Result getPostByCommunityId (Integer communityId) {
         return postService.getPostByCommunityId(communityId);
     }
 
@@ -63,27 +62,26 @@ public class PostController {
     @ApiOperation("获取帖子所有评论-不需要认证")
     @PostMapping("/getCommentByPostId")
     @NoNeedToAuthorized
-    public Result getCommentByPostId(Integer postId) {
+    public Result getCommentByPostId (Integer postId) {
         Post post = postService.getById(postId);
-        hotService.hotAdd(Math.toIntExact(post.getCommunityId()),1);
+        hotService.hotAdd(Math.toIntExact(post.getCommunityId()), 1);
         return commentService.getCommentByPostId(postId);
     }
 
     @ResponseBody
     @ApiOperation("发评论")
     @PostMapping("/sendComment")
-    public Result sendComment(Comment comment) {
+    public Result sendComment (Comment comment) {
         Post post = postService.getById(comment.getPostId());
-        hotService.hotAdd(Math.toIntExact(post.getCommunityId()),5);
+        hotService.hotAdd(Math.toIntExact(post.getCommunityId()), 5);
         return commentService.sentComment(comment);
     }
 
     @ResponseBody
     @ApiOperation(value = "发帖子")
     @PostMapping("/sendPost")
-    public Result sendPost(PostDto postDto, MultipartFile[] photos) {
-        if (photos != null)
-        {
+    public Result sendPost (PostDto postDto, MultipartFile[] photos) {
+        if (photos != null) {
             List<String> List = new ArrayList<>();
             for (MultipartFile file : photos) {
                 //上传图片 返回图片地址
@@ -97,7 +95,7 @@ public class PostController {
                 List.add(upload);
             }
             postDto.setPhotoList(List);
-            hotService.hotAdd(Math.toIntExact(postDto.getCommunityId()),5);
+            hotService.hotAdd(Math.toIntExact(postDto.getCommunityId()), 5);
         }
         return postService.sendPost(postDto);
     }
@@ -105,7 +103,7 @@ public class PostController {
     @ResponseBody
     @ApiOperation("帖子点赞")
     @PostMapping("/like")
-    public Result like(Integer postId, Integer userId) {
+    public Result like (Integer postId, Integer userId) {
         likeService.like(postId, userId);
         long count = likeService.likeCount(postId);
         int status = likeService.userLikeStatus(userId, postId);

@@ -39,7 +39,7 @@ public class CommunityController {
     @ApiOperation("获取用户关注的社群-不需要认证")
     @PostMapping("/getCommunityByUser")
     @NoNeedToAuthorized
-    public Result getCommunityByUser(Integer userId) {
+    public Result getCommunityByUser (Integer userId) {
         return communityService.getCommunity(userId);
     }
 
@@ -47,15 +47,15 @@ public class CommunityController {
     @ApiOperation("获取社群信息-不需要认证")
     @PostMapping("/getCommunityInformation")
     @NoNeedToAuthorized
-    public Result getCommunityInformation(Integer communityId) {
-        hotService.hotAdd(communityId,1);
+    public Result getCommunityInformation (Integer communityId) {
+        hotService.hotAdd(communityId, 1);
         return communityService.getCommunityInformation(communityId);
     }
 
     @ResponseBody
     @ApiOperation("创建社区")
     @PostMapping("/createCommunityInformation")
-    public Result createCommunityInformation(CommunityInfor communityInfor, MultipartFile photo) {
+    public Result createCommunityInformation (CommunityInfor communityInfor, MultipartFile photo) {
 
         //上传图片 返回图片地址
         String upload = null;
@@ -80,7 +80,7 @@ public class CommunityController {
     @ApiOperation("获取某一分类的社区,以图片中：言情为1，武侠为2，后面依次。热门和推荐单独接口-不需要认证")
     @PostMapping("/getCommunity")
     @NoNeedToAuthorized
-    public Result getCommunity(Integer type) {
+    public Result getCommunity (Integer type) {
         return communityService.getCommunityByType(type);
     }
 
@@ -88,8 +88,8 @@ public class CommunityController {
     @ApiOperation("获取热门社区-不需要认证")
     @PostMapping("/getCommunityHot")
     @NoNeedToAuthorized
-    public Result getCommunityHot() {
-//        return communityService.getCommunityHot();
+    public Result getCommunityHot () {
+        //        return communityService.getCommunityHot();
         return communityService.getCommunityRecommend();
     }
 
@@ -97,7 +97,7 @@ public class CommunityController {
     @ApiOperation("获取推荐社区-不需要认证")
     @PostMapping("/getCommunityRecommend")
     @NoNeedToAuthorized
-    public Result getCommunityRecommend() {
+    public Result getCommunityRecommend () {
         //推荐关注数前20的社区
         return communityService.getCommunityRecommend();
     }

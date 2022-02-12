@@ -1,15 +1,16 @@
 package com.turing.entity;
 
-import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author qds
@@ -30,27 +31,24 @@ public class Community implements Serializable {
     private Long communityId;
 
 
-    public Long getUserId() {
+    public Long getUserId () {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId (Long userId) {
         this.userId = userId;
     }
 
-    public Long getCommunityId() {
+    public Long getCommunityId () {
         return communityId;
     }
 
-    public void setCommunityId(Long communityId) {
+    public void setCommunityId (Long communityId) {
         this.communityId = communityId;
     }
 
     @Override
-    public String toString() {
-        return "Community{" +
-        "userId=" + userId +
-        ", communityId=" + communityId +
-        "}";
+    public String toString () {
+        return "Community{" + "userId=" + userId + ", communityId=" + communityId + "}";
     }
 }

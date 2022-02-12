@@ -15,18 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/home")
-@Api(description = "首页展示信息",tags = "HomeController")
-public class HomeController
-{
-
+@Api(description = "首页展示信息", tags = "HomeController")
+public class HomeController {
 
 
     @GetMapping("/get")
     @ApiOperation("获取首页展示数据")
     @ResponseBody
     @NoNeedToAuthorized
-    public Result list()
-    {
+    public Result list () {
         return null;
     }
 }

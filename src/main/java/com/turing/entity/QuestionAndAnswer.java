@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * Q&A
+ *
  * @Author: 又蠢又笨的懒羊羊程序猿
  * @CreateTime: 2022年01月29日 13:04:04
  */
@@ -18,9 +19,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName("qa")
-@ApiModel(value = "QuestionAndAnswer",description = "活动Q&A信息")
-public class QuestionAndAnswer
-{
+@ApiModel(value = "QuestionAndAnswer", description = "活动Q&A信息")
+public class QuestionAndAnswer {
     @ApiModelProperty(hidden = true)
     @TableId(type = IdType.AUTO)
     private Long id;

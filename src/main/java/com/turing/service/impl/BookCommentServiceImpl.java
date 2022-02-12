@@ -34,8 +34,7 @@ import java.util.Map;
 @Service
 @Transactional(rollbackFor = Exception.class)
 @Slf4j
-public class BookCommentServiceImpl implements BookCommentService
-{
+public class BookCommentServiceImpl implements BookCommentService {
     @Autowired
     private BookCommentMapper commentMapper;
 
@@ -49,20 +48,16 @@ public class BookCommentServiceImpl implements BookCommentService
     private RedisTemplate redisTemplate;
 
     @Override
-    public Result comment(BookCommentDto bookCommentDto)
-    {
+    public Result comment (BookCommentDto bookCommentDto) {
         Book book = bookMapper.selectById(bookCommentDto.getBookId());
-        if (book == null)
-        {
+        if (book == null) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("该书籍资料不存在,评论失败!");
         }
         User user = userMapper.selectById(bookCommentDto.getUserId());
-        if (user == null)
-        {
+        if (user == null) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("该用户不存在,评论失败!");
         }
-        if (bookCommentDto.getContent() == null || bookCommentDto.getType() == null)
-        {
+        if (bookCommentDto.getContent() == null || bookCommentDto.getType() == null) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("评论内容或评论类型不能为空!");
         }
         BookComment bookComment = new BookComment();
@@ -74,12 +69,10 @@ public class BookCommentServiceImpl implements BookCommentService
         Double rate = book.getActiveRate();
         Integer commentCount = book.getCommentCount();
         //得到好评数量
-        Integer result = commentMapper.selectCount(new QueryWrapper<BookComment>()
-                .eq("book_id", bookCommentDto.getBookId())
+        Integer result = commentMapper.selectCount(new QueryWrapper<BookComment>().eq("book_id", bookCommentDto.getBookId())
                 .eq("type", CommentStatus.POSITIVE.getCode()));
         //好评
-        if (bookComment.getType()!= null && bookComment.getType().equals(CommentStatus.POSITIVE.getCode()))
-        {
+        if (bookComment.getType() != null && bookComment.getType().equals(CommentStatus.POSITIVE.getCode())) {
             //好评加一
             result++;
         }
@@ -96,24 +89,21 @@ public class BookCommentServiceImpl implements BookCommentService
         BookDto bookDto = new BookDto();
         bookDto.transform(book);
         bookCommentDto.setId(bookComment.getId());
-        redisTemplate.opsForHash().put(RedisKey.BOOK_KEY+bookCommentDto.getBookId(),
-                RedisKey.BOOK_COMMENT_FILED+bookComment.getId(),
-                bookCommentDto);
-        Map<String,Object> resultMap = new HashMap<>();
-        resultMap.put("book",bookDto);
-        resultMap.put("comment",bookComment);
+        redisTemplate.opsForHash()
+                .put(RedisKey.BOOK_KEY + bookCommentDto.getBookId(), RedisKey.BOOK_COMMENT_FILED + bookComment.getId(), bookCommentDto);
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("book", bookDto);
+        resultMap.put("comment", bookComment);
         return new Result().success(resultMap);
     }
 
     @Override
-    public Result getCommentByPage(Integer page, Integer size, Integer bookId)
-    {
+    public Result getCommentByPage (Integer page, Integer size, Integer bookId) {
         //数据库查询
         Page<BookComment> commentPage = new Page<>(page, size);
         Page<BookComment> pageInfo = commentMapper.selectPage(commentPage, new QueryWrapper<BookComment>().eq("book_id", bookId));
         List<BookComment> bookCommentList = pageInfo.getRecords();
-        if (bookCommentList == null || bookCommentList.isEmpty())
-        {
+        if (bookCommentList == null || bookCommentList.isEmpty()) {
             return new Result().success("暂无评论信息!");
         }
         List<BookCommentDto> bookCommentDtoList = new ArrayList<>();

@@ -36,9 +36,8 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 @Slf4j
-@Transactional
-public class OrderServiceImpl implements OrderService
-{
+@Transactional(rollbackFor = Exception.class)
+public class OrderServiceImpl implements OrderService {
     @Autowired
     private RedisTemplate redisTemplate;
 
@@ -61,23 +60,20 @@ public class OrderServiceImpl implements OrderService
     private RestHighLevelClient client;
 
     @Override
-    public Result submit(OrderDto orderDto)
-    {
+    public Result submit (OrderDto orderDto) {
         Integer bookId = orderDto.getBookId();
-        Book book = bookMapper.selectOne(new QueryWrapper<Book>().eq("id",bookId).eq("status", BookStatus.EFFECTIVE.getCode()));
-        if (book == null)
-        {
+        Book book = bookMapper.selectOne(new QueryWrapper<Book>().eq("id", bookId)
+                .eq("status", BookStatus.EFFECTIVE.getCode()));
+        if (book == null) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("书籍不存在或已经失效,创建订单失败!");
         }
         Long userId = orderDto.getUserId();
         User user = userMapper.selectById(userId);
-        if (user == null)
-        {
+        if (user == null) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("用户不存在,创建订单失败!");
         }
         Integer count = orderDto.getCount();
-        if (count <=0 || count > book.getStock())
-        {
+        if (count <= 0 || count > book.getStock()) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("商品数量非法,创建订单失败!");
         }
         //单价
@@ -93,14 +89,12 @@ public class OrderServiceImpl implements OrderService
         orderDto.setTotal(total);
         orderDto.setFreight(book.getFreight());
         orderDto.setStatus(OrderStatus.TO_BE_PAID.getStatus());
-        redisTemplate.execute(new SessionCallback()
-        {
+        redisTemplate.execute(new SessionCallback() {
             @Override
-            public Object execute(RedisOperations operations) throws DataAccessException
-            {
+            public Object execute (RedisOperations operations) throws DataAccessException {
                 operations.multi();
-                operations.opsForHash().put(RedisKey.ORDER_KEY+userId,RedisKey.ORDER_FIELD+id,orderDto);
-                operations.opsForValue().set(RedisKey.ORDER_FIELD+id,orderDto,30, TimeUnit.MINUTES);
+                operations.opsForHash().put(RedisKey.ORDER_KEY + userId, RedisKey.ORDER_FIELD + id, orderDto);
+                operations.opsForValue().set(RedisKey.ORDER_FIELD + id, orderDto, 30, TimeUnit.MINUTES);
                 return operations.exec();
             }
         });
@@ -108,14 +102,11 @@ public class OrderServiceImpl implements OrderService
     }
 
     @Override
-    public Result getOrderInfo(Long userId)
-    {
+    public Result getOrderInfo (Long userId) {
         final Map<String, OrderDto>[] orders = new Map[]{null};
-        redisTemplate.execute(new SessionCallback()
-        {
+        redisTemplate.execute(new SessionCallback() {
             @Override
-            public Object execute(RedisOperations operations) throws DataAccessException
-            {
+            public Object execute (RedisOperations operations) throws DataAccessException {
                 orders[0] = operations.opsForHash().entries(RedisKey.ORDER_KEY + userId);
                 ArrayList<OrderDto> orderList = new ArrayList<>();
                 operations.multi();
@@ -134,69 +125,59 @@ public class OrderServiceImpl implements OrderService
                 return operations.exec();
             }
         });
-        if (orders[0].isEmpty() || orders[0] == null)
-        {
+        if (orders[0].isEmpty()) {
             return new Result().success("暂时无订单信息!");
         }
         return new Result().success(orders[0]);
     }
 
     @Override
-    public Result payForOrder(Long userId, Long orderId)
-    {
+    public Result payForOrder (Long userId, Long orderId) {
         User user = userMapper.selectById(userId);
-        if (user == null)
-        {
+        if (user == null) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("用户不存在,支付订单失败!");
         }
-        OrderDto orderDto = (OrderDto) redisTemplate.execute(new SessionCallback()
-        {
+        OrderDto orderDto = (OrderDto) redisTemplate.execute(new SessionCallback() {
             @Override
-            public OrderDto execute(RedisOperations operations) throws DataAccessException
-            {
+            public OrderDto execute (RedisOperations operations) throws DataAccessException {
                 OrderDto orderDtoInHash = (OrderDto) operations.opsForHash()
                         .get(RedisKey.ORDER_KEY + userId, RedisKey.ORDER_FIELD + orderId);
                 OrderDto orderDtoInValue = (OrderDto) operations.opsForValue().get(RedisKey.ORDER_FIELD + orderId);
-                if (orderDtoInValue == null && orderDtoInHash != null)
-                {
+                if (orderDtoInValue == null && orderDtoInHash != null) {
                     orderDtoInHash.setStatus(OrderStatus.CANCELED.getStatus());
-                    operations.opsForHash().put(RedisKey.ORDER_KEY + userId, RedisKey.ORDER_FIELD + orderId,orderDtoInHash);
+                    operations.opsForHash()
+                            .put(RedisKey.ORDER_KEY + userId, RedisKey.ORDER_FIELD + orderId, orderDtoInHash);
                     return orderDtoInHash;
                 }
                 return orderDtoInHash;
             }
         });
-        if (orderDto == null)
-        {
+        if (orderDto == null) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("订单不存在,支付失败!");
         }
-        if (orderDto.getStatus().equals(OrderStatus.CANCELED.getStatus()))
-        {
+        if (orderDto.getStatus().equals(OrderStatus.CANCELED.getStatus())) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("订单已被取消,支付失败!");
         }
-        log.info("订单信息:[{}]",orderDto);
+        log.info("订单信息:[{}]", orderDto);
 
         //判断书籍是否有效
         Book book = bookMapper.selectById(orderDto.getBookId());
-        if (book == null || !BookStatus.EFFECTIVE.getCode().equals(book.getStatus()))
-        {
+        if (book == null || !BookStatus.EFFECTIVE.getCode().equals(book.getStatus())) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("购买书籍不存在或已经失效,支付订单失败!");
         }
         //库存容量是否足够
-        if (book.getStock() < orderDto.getCount())
-        {
+        if (book.getStock() < orderDto.getCount()) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("商品数量不足,支付订单失败!");
         }
         //开始支付
         //支付回调返回成功结果
         orderDto.setStatus(OrderStatus.TO_BE_SHIPPED.getStatus());
         orderDto.setPayTime(LocalDateTime.now());
-        redisTemplate.opsForValue().set(RedisKey.ORDER_FIELD+orderId,orderDto);
-        redisTemplate.opsForHash().put(RedisKey.ORDER_KEY+userId,RedisKey.ORDER_FIELD+orderId,orderDto);
+        redisTemplate.opsForValue().set(RedisKey.ORDER_FIELD + orderId, orderDto);
+        redisTemplate.opsForHash().put(RedisKey.ORDER_KEY + userId, RedisKey.ORDER_FIELD + orderId, orderDto);
         //扣减书籍数量
         book.setStock(book.getStock() - orderDto.getCount());
-        if (book.getStock() <= 0)
-        {
+        if (book.getStock() <= 0) {
             book.setStatus(BookStatus.INVALID.getCode());
         }
         //更新书籍信息
@@ -221,51 +202,47 @@ public class OrderServiceImpl implements OrderService
     }
 
     @Override
-    public Result getOrderDetail(Long userId,Long orderId)
-    {
-        OrderDto orderDto = (OrderDto) redisTemplate.opsForHash().get(RedisKey.ORDER_KEY+userId,RedisKey.ORDER_FIELD+orderId);
-        if (orderDto == null)
-        {
+    public Result getOrderDetail (Long userId, Long orderId) {
+        OrderDto orderDto = (OrderDto) redisTemplate.opsForHash()
+                .get(RedisKey.ORDER_KEY + userId, RedisKey.ORDER_FIELD + orderId);
+        if (orderDto == null) {
             Order order = orderMapper.selectById(orderId);
-            if (order == null)
-            {
+            if (order == null) {
                 return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("订单不存在,查询失败");
             }
+            if (!order.getUserId().equals(userId)) {
+                return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("订单信息与用户信息不匹配,查询失败!");
+            }
+            orderDto = new OrderDto();
             orderDto.transform(order);
-            redisTemplate.opsForHash().put(RedisKey.ORDER_KEY+userId,RedisKey.ORDER_FIELD+orderId,orderDto);
+            redisTemplate.opsForHash().put(RedisKey.ORDER_KEY + userId, RedisKey.ORDER_FIELD + orderId, orderDto);
         }
         Address address = addressMapper.selectById(orderDto.getAddressId());
-        Map<String,Object> result = new HashMap<>();
-        result.put("address",address);
-        result.put("order",orderDto);
+        Map<String, Object> result = new HashMap<>(2);
+        result.put("address", address);
+        result.put("order", orderDto);
         return new Result().success(result);
     }
 
     @Override
-    public Result createOrderFromCart(Long userId, Long cartId, Integer addressId)
-    {
+    public Result createOrderFromCart (Long userId, Long cartId, Integer addressId) {
         User user = userMapper.selectById(userId);
         Cart cart = (Cart) redisTemplate.opsForHash().get(RedisKey.CART_KEY + userId, cartId.toString());
         Address address = addressMapper.selectById(addressId);
-        if (cart == null || user == null || address == null)
-        {
+        if (cart == null || user == null || address == null) {
             cart = cartMapper.selectOne(new QueryWrapper<Cart>().eq("id", cartId).eq("user_id", userId));
-            if (cart == null)
-            {
+            if (cart == null) {
                 return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("参数传递错误,创建订单失败!");
             }
-            if (CartStatus.DELETED.getCode().equals(cart.getDeleted()))
-            {
+            if (CartStatus.DELETED.getCode().equals(cart.getDeleted())) {
                 return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("购物车已提交订单,请勿重复提交!");
             }
         }
         Book book = bookMapper.selectById(cart.getBookId());
-        if (book == null || !BookStatus.EFFECTIVE.getCode().equals(book.getStatus()))
-        {
+        if (book == null || !BookStatus.EFFECTIVE.getCode().equals(book.getStatus())) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("购物车物品已失效或不存在,创建订单失败!");
         }
-        if (book.getStock() < cart.getCount())
-        {
+        if (book.getStock() < cart.getCount()) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("购物车中商品库存已不足,创建订单失败!");
         }
         OrderDto orderDto = new OrderDto();
@@ -286,16 +263,14 @@ public class OrderServiceImpl implements OrderService
         //清除购物车
         cart.setDeleted(CartStatus.DELETED.getCode());
         cartMapper.updateById(cart);
-        redisTemplate.execute(new SessionCallback()
-        {
+        redisTemplate.execute(new SessionCallback() {
             @Override
-            public Object execute(RedisOperations operations) throws DataAccessException
-            {
+            public Object execute (RedisOperations operations) throws DataAccessException {
                 operations.multi();
                 //清除购物车
-                operations.opsForHash().delete(RedisKey.CART_KEY+userId,cartId.toString());
-                operations.opsForHash().put(RedisKey.ORDER_KEY+userId,RedisKey.ORDER_FIELD+id,orderDto);
-                operations.opsForValue().set(RedisKey.ORDER_FIELD+id,orderDto,30, TimeUnit.MINUTES);
+                operations.opsForHash().delete(RedisKey.CART_KEY + userId, cartId.toString());
+                operations.opsForHash().put(RedisKey.ORDER_KEY + userId, RedisKey.ORDER_FIELD + id, orderDto);
+                operations.opsForValue().set(RedisKey.ORDER_FIELD + id, orderDto, 30, TimeUnit.MINUTES);
                 return operations.exec();
             }
         });
@@ -303,32 +278,27 @@ public class OrderServiceImpl implements OrderService
     }
 
     @Override
-    public Result confirmOrder(Long orderId, Long userId)
-    {
-        OrderDto orderDto = (OrderDto) redisTemplate.opsForHash().get(RedisKey.ORDER_KEY + userId, RedisKey.ORDER_FIELD + orderId);
-        if (orderDto == null)
-        {
+    public Result confirmOrder (Long orderId, Long userId) {
+        OrderDto orderDto = (OrderDto) redisTemplate.opsForHash()
+                .get(RedisKey.ORDER_KEY + userId, RedisKey.ORDER_FIELD + orderId);
+        if (orderDto == null) {
             Order order = orderMapper.selectOne(new QueryWrapper<Order>().eq("id", orderId).eq("user_id", userId));
-            if (order == null)
-            {
+            if (order == null) {
                 return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("订单不存在,确认收货失败!");
             }
             orderDto = new OrderDto();
             orderDto.transform(order);
-            redisTemplate.opsForHash().put(RedisKey.ORDER_KEY + userId, RedisKey.ORDER_FIELD + orderId,orderDto);
+            redisTemplate.opsForHash().put(RedisKey.ORDER_KEY + userId, RedisKey.ORDER_FIELD + orderId, orderDto);
         }
         //校验订单是否处于已签收状态
-        if (!OrderStatus.SHIPPED_END.getStatus().equals(orderDto.getStatus()))
-        {
+        if (!OrderStatus.SHIPPED_END.getStatus().equals(orderDto.getStatus())) {
             return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR).message("当前订单状态无法确认签收!");
         }
         orderDto.setStatus(OrderStatus.RECEIVED.getStatus());
         OrderDto finalOrderDto = orderDto;
-        redisTemplate.execute(new SessionCallback()
-        {
+        redisTemplate.execute(new SessionCallback() {
             @Override
-            public Object execute(RedisOperations operations) throws DataAccessException
-            {
+            public Object execute (RedisOperations operations) throws DataAccessException {
                 operations.multi();
                 operations.opsForHash().put(RedisKey.ORDER_KEY + userId, RedisKey.ORDER_FIELD + orderId, finalOrderDto);
                 operations.opsForValue().set(RedisKey.ORDER_FIELD + orderId, finalOrderDto);

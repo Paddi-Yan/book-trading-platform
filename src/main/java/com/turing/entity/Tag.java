@@ -18,10 +18,9 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(value = "Tag",description = "分类标签信息")
-public class Tag implements Serializable
-{
-    @TableId(value = "id",type = IdType.AUTO)
+@ApiModel(value = "Tag", description = "分类标签信息")
+public class Tag implements Serializable {
+    @TableId(value = "id", type = IdType.AUTO)
     @ApiModelProperty(required = true)
     private Integer id;
     @ApiModelProperty(required = true)
@@ -31,8 +30,7 @@ public class Tag implements Serializable
     @ApiModelProperty(required = true)
     private Integer userId;
 
-    public Tag(String name, Integer userId)
-    {
+    public Tag (String name, Integer userId) {
         this.name = name;
         this.userId = userId;
     }

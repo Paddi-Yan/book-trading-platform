@@ -12,25 +12,21 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/error")
-public class ErrorController
-{
+public class ErrorController {
     @RequestMapping("/404")
     @NoNeedToAuthorized
-    public Result notFoundError()
-    {
+    public Result notFoundError () {
         return new Result().fail(HttpStatusCode.NOT_FOUND);
     }
 
     @RequestMapping("/500")
     @NoNeedToAuthorized
-    public Result serverError()
-    {
+    public Result serverError () {
         return new Result().fail(HttpStatusCode.ERROR);
     }
 
     @NoNeedToAuthorized
-    public Result error()
-    {
+    public Result error () {
         return new Result().success("");
     }
 

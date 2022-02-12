@@ -1,12 +1,12 @@
 package com.turing.mapper;
 
-import com.turing.entity.Community;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.turing.entity.Community;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author qds

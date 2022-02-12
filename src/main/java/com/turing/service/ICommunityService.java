@@ -6,23 +6,23 @@ import com.turing.entity.CommunityInfor;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author qds
  * @since 2022-01-26
  */
 public interface ICommunityService extends IService<CommunityInfor> {
-    Result getCommunity(Integer userId);
+    Result getCommunity (Integer userId);
 
-    Result getCommunityInformation(Integer communityId);
+    Result getCommunityInformation (Integer communityId);
 
-    Result createCommunity(CommunityInfor communityInfor);
+    Result createCommunity (CommunityInfor communityInfor);
 
-    Result getCommunityByType(Integer type);
+    Result getCommunityByType (Integer type);
 
-    Result getCommunityRecommend();
+    Result getCommunityRecommend ();
 
-    Result getCommunityHot();
+    Result getCommunityHot ();
 
 }
