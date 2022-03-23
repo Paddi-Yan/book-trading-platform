@@ -113,9 +113,9 @@ public class PostController {
     @NoNeedToAuthorized
     public Result like(Integer postId, Integer userId) {
         if (postId == null || userId == null) return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR);
-        likeService.like(postId, userId);
-        long count = likeService.likeCount(postId);
-        int status = likeService.userLikeStatus(userId, postId);
+        likeService.like(postId, userId,1);
+        long count = likeService.likeCount(postId,1);
+        int status = likeService.userLikeStatus(userId, postId,1);
         Map<String, Object> map = new HashMap<>();
         map.put("likeCount", count);
         map.put("likeStatus", status);

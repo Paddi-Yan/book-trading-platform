@@ -46,7 +46,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
         for (Post post : postList) {
             PostDto postDto = new PostDto();
             int postId = post.getPostId().intValue();
-            likeCount = (int)likeService.likeCount(Integer.valueOf(postId));
+            likeCount = (int)likeService.likeCount(Integer.valueOf(postId),1);
 
             QueryWrapper<Comment> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("post_id", postId);

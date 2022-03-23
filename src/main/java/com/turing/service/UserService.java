@@ -14,8 +14,6 @@ public interface UserService
 {
 
 
-
-
     Result getUserInfo( Boolean refreshToken);
 
     User getUserById(Integer userId);
