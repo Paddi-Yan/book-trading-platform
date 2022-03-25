@@ -122,5 +122,20 @@ public class PostController {
         return new Result().success(map);
     }
 
+    @ResponseBody
+    @ApiOperation("评论点赞")
+    @PostMapping("/commentLike")
+    @NoNeedToAuthorized
+    public Result commentLike(Integer commentId, Integer userId) {
+        if (commentId == null || userId == null) return new Result().fail(HttpStatusCode.REQUEST_PARAM_ERROR);
+        likeService.like(commentId, userId,2);
+        long count = likeService.likeCount(commentId,2);
+        int status = likeService.userLikeStatus(userId, commentId,2);
+        Map<String, Object> map = new HashMap<>();
+        map.put("likeCount", count);
+        map.put("likeStatus", status);
+        return new Result().success(map);
+    }
+
 }
 
