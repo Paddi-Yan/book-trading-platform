@@ -6,6 +6,7 @@ import com.turing.common.HttpStatusCode;
 import com.turing.common.Result;
 import com.turing.entity.Comment;
 import com.turing.entity.Post;
+import com.turing.entity.User;
 import com.turing.entity.dto.PostDto;
 import com.turing.mapper.PostMapper;
 import com.turing.service.IPostService;
@@ -34,6 +35,8 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
     LikeService likeService;
     @Autowired
     CommentServiceImpl commentService;
+    @Autowired
+    UserServiceImpl userService;
 
     @Override
     public Result getPostByCommunityId(Integer communityId) {
@@ -52,7 +55,12 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements IP
             queryWrapper.eq("post_id", postId);
             commentCount = commentService.count(queryWrapper);
 
-            postDto.transform(post,commentCount,likeCount);
+            User user = userService.getUserById(post.getUserId().intValue());
+            String username = user.getUsername();
+            String avatar = user.getAvatar();
+            String address = "广东 湛江";
+
+            postDto.transform(post,username,avatar,address,commentCount,likeCount);
             postDtoList.add(postDto);
         }
 

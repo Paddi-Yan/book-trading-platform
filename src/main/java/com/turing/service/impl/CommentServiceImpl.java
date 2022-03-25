@@ -44,12 +44,12 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             public CommentDto apply(Comment comment) {
                 CommentDto commentDto = new CommentDto();
                 long count = likeService.likeCount(comment.getId().intValue(), 2);
-                User user = null;
-                String username = null;
-                String avatar = null;
-//                User user = userService.getUserById(comment.getUserId().intValue());
-//                String username = user.getUsername();
-//                String avatar = user.getAvatar();
+//                User user = null;
+//                String username = null;
+//                String avatar = null;
+                User user = userService.getUserById(comment.getUserId().intValue());
+                String username = user.getUsername();
+                String avatar = user.getAvatar();
                 commentDto.transform(comment, username, avatar, count);
                 return commentDto;
             }

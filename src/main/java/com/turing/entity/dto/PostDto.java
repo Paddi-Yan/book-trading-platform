@@ -38,8 +38,14 @@ public class PostDto implements Serializable {
     @ApiModelProperty("发表人id")
     private Long userId;
 
-    @ApiModelProperty("相关书籍id")
-    private Integer bookId;
+    @ApiModelProperty(hidden = true)
+    private String userName;
+
+    @ApiModelProperty(hidden = true)
+    private String headPhoto;
+
+    @ApiModelProperty(hidden = true)
+    private String address;
 
     @ApiModelProperty("标题")
     private String title;
@@ -63,10 +69,13 @@ public class PostDto implements Serializable {
     private Integer likeCount;
 
 
-    public void transform(Post post, Integer commentCount, Integer likeCount) {
+    public void transform(Post post,String userName,String headPhoto,String address, Integer commentCount, Integer likeCount) {
         BeanUtils.copyProperties(post, this);
         this.setCommentCount(commentCount);
         this.setLikeCount(likeCount);
+        this.setUserName(userName);
+        this.setHeadPhoto(headPhoto);
+        this.setAddress(address);
 
         List<String> photos = new ArrayList<>();
         if (post.getPhoto() == null) return;
