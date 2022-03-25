@@ -3,6 +3,7 @@ package com.turing.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.turing.entity.dto.UserDto;
 import com.turing.entity.dto.WechatUserInfo;
 import io.swagger.annotations.ApiModel;
@@ -11,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -56,7 +58,11 @@ public class User
     @TableField("enabled")
     private byte isEnabled;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Timestamp registerTime;
+
+    @TableField("last_login_ip")
     private String lastLoginIP;
 
     public void transform(UserDto userDto)
